@@ -10,14 +10,12 @@ func Test_ShoulFailUserRegisterValidation(t *testing.T) {
 	if err == nil {
 		t.Error("should have failed validation")
 	}
-
 	user.Name = "Paolo"
 	user.Password = "123"
 	err = user.ValidateRegister()
 	if err == nil {
 		t.Error("should have failed validation")
 	}
-
 	user.Email = "asdfg"
 	err = user.ValidateRegister()
 	if err == nil {
