@@ -20,9 +20,9 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 
-	handler := api.NewHandler(user.NewUserService(nil))
+	userHandler := api.NewUserHandler(user.NewUserService(nil))
 
-	router.Post("/", handler.Post)
+	router.Post("/api/user", userHandler.Post)
 	errs := make(chan error, 2)
 
 	go func() {

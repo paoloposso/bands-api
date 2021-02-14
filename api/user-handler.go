@@ -13,12 +13,12 @@ type UserHandler interface {
 	Post(http.ResponseWriter, *http.Request)
 }
 
-type handler struct {
+type userHandler struct {
 	userService user.UserService
 }
 
-func NewHandler(userService user.UserService) UserHandler {
-	return &handler {userService: userService}
+func NewUserHandler(userService user.UserService) UserHandler {
+	return &userHandler {userService: userService}
 }
 
 func setupResponse(w http.ResponseWriter, contentType string, body []byte, statuscode int) {
@@ -30,7 +30,7 @@ func setupResponse(w http.ResponseWriter, contentType string, body []byte, statu
 	}
 }
 
-func (h *handler) Post(w http.ResponseWriter, r *http.Request) {
+func (h *userHandler) Post(w http.ResponseWriter, r *http.Request) {
 	var u user.User
 	fmt.Println(r.Header)
 	err := json.NewDecoder(r.Body).Decode(&u)
