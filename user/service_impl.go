@@ -6,10 +6,10 @@ type userService struct {
 
 func NewUserService(userRepo UserRepository) UserService {
 	return &userService{
-		userRepo: userRepo,
+		userRepo,
 	}
 }
 
-func (*userService) Register(user *User) error {
-	return nil
+func (s *userService) Register(user *User) error {
+	return s.userRepo.Create(user)
 }
