@@ -10,7 +10,6 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	api "github.com/paoloposso/bands-api/api"
-	"github.com/paoloposso/bands-api/repository/memory"
 	"github.com/paoloposso/bands-api/user"
 )
 
@@ -21,19 +20,22 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 
-	repo, _ := memory.NewMemoryRepository()
-	api.RegisterUserHandler(user.NewUserService(repo), router)
-	
+	userHandler := api.NewUserHandler(user.NewUserService(nil))
+
+	router.Post("/api/user", userHandler.Post)
 	errs := make(chan error, 2)
+
 	go func() {
 		fmt.Println("Listening on port ", httpPort())
 		errs <- http.ListenAndServe(httpPort(), router)
 	}()
+
 	go func(){
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT)
 		errs <- fmt.Errorf("%s", <-c)
 	}()
+
 	fmt.Printf("Terminated %s", <-errs)
 }
 
