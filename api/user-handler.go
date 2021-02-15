@@ -3,9 +3,9 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
+	"github.com/go-chi/chi"
 	"github.com/paoloposso/bands-api/user"
 )
 
@@ -17,17 +17,9 @@ type userHandler struct {
 	userService user.UserService
 }
 
-func NewUserHandler(userService user.UserService) UserHandler {
-	return &userHandler {userService: userService}
-}
-
-func setupResponse(w http.ResponseWriter, contentType string, body []byte, statuscode int) {
-	w.Header().Set("Content-Type", contentType)
-	w.WriteHeader(statuscode)
-	_, err := w.Write(body)
-	if err != nil {
-		log.Println(err)
-	}
+func RegisterUserHandler(userService user.UserService, router *chi.Mux) {
+	handler := userHandler {userService: userService}
+	router.Post("/api/user", handler.Post)
 }
 
 func (h *userHandler) Post(w http.ResponseWriter, r *http.Request) {
