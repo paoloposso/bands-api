@@ -1,11 +1,13 @@
-package user
+package test
 
 import (
 	"testing"
+
+	"github.com/paoloposso/bands-api/user"
 )
 
 func Test_ShoulFailUserRegisterValidation(t *testing.T) {
-	user := User {}
+	user := user.User {}
 	err := user.ValidateRegister()
 	if err == nil {
 		t.Error("should have failed validation")
@@ -24,7 +26,7 @@ func Test_ShoulFailUserRegisterValidation(t *testing.T) {
 }
 
 func Test_ShouldPassUserRegisterValidate(t *testing.T) {
-	user := User {
+	user := user.User {
 		Name: "Test",
 		Email: "paolo@test.com",
 		Password: "123456789",
