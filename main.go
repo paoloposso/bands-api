@@ -9,19 +9,22 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/joho/godotenv"
 	api "github.com/paoloposso/bands-api/api"
 	"github.com/paoloposso/bands-api/repository/memory"
 	"github.com/paoloposso/bands-api/user"
 )
 
 func main() {
+	_ = godotenv.Load()
+
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 
-	repo, _ := memory.NewMemoryRepository()
+	repo, _ := chooseRepo()
 	api.RegisterUserHandler(user.NewUserService(repo), router)
 	
 	errs := make(chan error, 2)
@@ -43,4 +46,13 @@ func httpPort() string {
 		port = os.Getenv("PORT")
 	}
 	return fmt.Sprintf(":%s", port)
+}
+
+func chooseRepo() (user.UserRepository, error) {
+	env := os.Getenv("ENV")
+	fmt.Println(env)
+	if env == "TEST" {
+		return memory.NewMemoryRepository()
+	}
+	return memory.NewMemoryRepository()
 }

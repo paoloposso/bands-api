@@ -1,16 +1,16 @@
 name: Go
 
-on: 
-  push: 
-    branches: 
-      — master 
-      — staging
-      — develop 
-  pull_request: 
-    branches: 
-      — master 
-      — staging 
-      — develop
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
 
 jobs:
 
