@@ -29,6 +29,8 @@ jobs:
         go get github.com/go-chi/chi
         go get github.com/gookit/validate
         go get github.com/google/uuid
+        go get golang.org/x/crypto/bcrypt
+        go get github.com/joho/godotenv
           
     - name: Build
       run: go build -v ./...
