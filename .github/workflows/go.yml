@@ -1,10 +1,16 @@
 name: Go
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: 
+  push: 
+    branches: 
+      — master 
+      — staging
+      — develop 
+  pull_request: 
+    branches: 
+      — master 
+      — staging 
+      — develop
 
 jobs:
 
@@ -19,7 +25,10 @@ jobs:
         go-version: 1.13.x
 
     - name: Install
-      run: go get -v ./...
+      run: |
+        go get github.com/go-chi/chi
+        go get github.com/gookit/validate
+        go get github.com/google/uuid
           
     - name: Build
       run: go build -v ./...
