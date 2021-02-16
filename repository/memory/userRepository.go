@@ -1,7 +1,7 @@
 package memory
 
 import (
-	"github.com/paoloposso/bands-api/user"
+	"bands-api/user"
 )
 
 type userRepository struct {}

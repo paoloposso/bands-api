@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"bands-api/user"
+
 	"github.com/go-chi/chi"
-	"github.com/paoloposso/bands-api/user"
 )
 
 type UserHandler interface {

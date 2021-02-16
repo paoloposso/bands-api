@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/paoloposso/bands-api/repository/memory"
-	"github.com/paoloposso/bands-api/user"
+	"bands-api/repository/memory"
+	"bands-api/user"
 )
 
 func Test_ShouldGenerateUserId(t *testing.T) {

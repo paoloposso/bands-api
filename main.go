@@ -7,12 +7,13 @@ import (
 	"os/signal"
 	"syscall"
 
+	api "bands-api/api"
+	"bands-api/repository/memory"
+	"bands-api/user"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/joho/godotenv"
-	api "github.com/paoloposso/bands-api/api"
-	"github.com/paoloposso/bands-api/repository/memory"
-	"github.com/paoloposso/bands-api/user"
 )
 
 func main() {

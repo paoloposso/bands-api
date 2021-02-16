@@ -1,7 +1,8 @@
 package user
 
 import (
-	id "github.com/paoloposso/bands-api/util"
+	id "bands-api/util"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
