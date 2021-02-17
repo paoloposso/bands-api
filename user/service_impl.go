@@ -1,15 +1,16 @@
 package user
 
 import (
-	id "bands-api/util"
-
-	"golang.org/x/crypto/bcrypt"
+	customerrors "bands-api/custom_errors"
+	"bands-api/hashing"
+	passwordutil "bands-api/password"
 )
 
 type userService struct {
 	userRepo UserRepository
 }
 
+// NewUserService returns a reference to userService struct
 func NewUserService(userRepo UserRepository) UserService {
 	return &userService{
 		userRepo,
@@ -17,8 +18,8 @@ func NewUserService(userRepo UserRepository) UserService {
 }
 
 func (s *userService) Register(user *User) error {
-	user.Id = id.GenerateUuid()
-	hash, err := generatePasswordHash(user.Password)
+	user.Id = hashing.GenerateUuid()
+	hash, err := passwordutil.GeneratePasswordHash(user.Password)
 	if err != nil {
 		return err
 	}
@@ -28,12 +29,14 @@ func (s *userService) Register(user *User) error {
 	return err
 }
 
-func generatePasswordHash(plainTextPassword string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(plainTextPassword), 14)
-	return string(bytes), err
-}
-
-func checkPasswordHash(password, hash string) bool {
-    err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-    return err == nil
+// Login method performs System User's Login using 
+func (s *userService) Login(email string, plainTextPassword string) (string, error) {
+	user, err := s.userRepo.GetByEmail(email)
+	if err != nil {
+		return "", err
+	}
+	if passwordutil.CheckPasswordHash(plainTextPassword, user.Password) {
+		return "token", nil
+	}
+	return "", &customerrors.InvalidEmailOrIncorrectPasswordError { Email: email }
 }
