@@ -8,8 +8,7 @@ import (
 	"syscall"
 
 	api "bands-api/api"
-	"bands-api/repository/memory"
-	"bands-api/user"
+	factories "bands-api/api/service_factories"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -25,8 +24,7 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 
-	repo, _ := chooseRepo()
-	api.RegisterUserHandler(user.NewUserService(repo), router)
+	api.RegisterUserHandler(factories.CreateUserService(), router)
 	
 	errs := make(chan error, 2)
 	go func() {
@@ -47,13 +45,4 @@ func httpPort() string {
 		port = os.Getenv("PORT")
 	}
 	return fmt.Sprintf(":%s", port)
-}
-
-func chooseRepo() (user.Repository, error) {
-	env := os.Getenv("ENV")
-	fmt.Println(env)
-	if env == "TEST" {
-		return memory.NewMemoryRepository()
-	}
-	return memory.NewMemoryRepository()
 }

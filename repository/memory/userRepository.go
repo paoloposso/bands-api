@@ -1,8 +1,9 @@
 package memory
 
 import (
-	"bands-api/password"
 	"bands-api/user"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type userRepository struct {}
@@ -18,10 +19,15 @@ func (r *userRepository) Create(user *user.User) error {
 }
 
 func (r *userRepository) GetByEmail(email string) (*user.User, error) {
-	hash, _ := password.GeneratePasswordHash("123456")
+	hash, _ := generatePasswordHash("123456")
 	us := user.User{ ID: "123456", Name: "Paolo", Email: "paolo@paolo.com", Password: hash }
 	if email == us.Email {
 		return &us, nil
 	}
 	return nil, nil
+}
+
+func generatePasswordHash(plainTextPassword string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(plainTextPassword), 14)
+	return string(bytes), err
 }

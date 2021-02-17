@@ -2,8 +2,10 @@ package user
 
 import (
 	customerrors "bands-api/custom_errors"
-	"bands-api/hashing"
-	passwordutil "bands-api/password"
+	"strings"
+
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type userService struct {
@@ -18,12 +20,12 @@ func NewUserService(userRepo Repository) Service {
 }
 
 func (s *userService) Register(user *User) error {
-	user.ID = hashing.GenerateUuid()
+	user.ID = generateID()
 	err := user.ValidateRegister()
 	if err != nil {
 		return err
 	}
-	hash, err := passwordutil.GeneratePasswordHash(user.Password)
+	hash, err := generatePasswordHash(user.Password)
 	if err != nil {
 		return err
 	}
@@ -39,8 +41,22 @@ func (s *userService) Login(email string, plainTextPassword string) (string, err
 	if err != nil {
 		return "", err
 	}
-	if passwordutil.CheckPasswordHash(plainTextPassword, user.Password) {
+	if checkPasswordHash(plainTextPassword, user.Password) {
 		return "token", nil
 	}
 	return "", &customerrors.InvalidEmailOrIncorrectPasswordError { Email: email }
+}
+
+func generateID() string {
+    return strings.Replace(uuid.New().String(), "-", "", -1)
+}
+
+func generatePasswordHash(plainTextPassword string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(plainTextPassword), 14)
+	return string(bytes), err
+}
+
+func checkPasswordHash(plaintTextPassword, hash string) bool {
+    err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(plaintTextPassword))
+    return err == nil
 }

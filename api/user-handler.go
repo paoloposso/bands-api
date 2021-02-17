@@ -21,7 +21,7 @@ type userHandler struct {
 	userService user.Service
 }
 
-// RegisterUserHandler returns a handler struct, that handles the api requests for the User Domain
+// RegisterUserHandler returns a handler struct that handles the api requests for the User Domain
 func RegisterUserHandler(userService user.Service, router *chi.Mux) {
 	handler := userHandler {userService: userService}
 	router.Post("/api/user", handler.Post)
