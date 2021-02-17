@@ -53,3 +53,39 @@ func Test_ShouldFailUserValidation(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func Test_ShouldPerformLogin(t *testing.T) {
+	repo, err := memory.NewMemoryRepository()
+
+	if err != nil {
+		fmt.Println(err)
+		panic("MemoryRepository could not be injected")
+	}
+	
+	service := user.NewUserService(repo)
+
+	token, err := service.Login("paolo@paolo.com", "123456")
+
+	if token == "" || err != nil {
+		t.Fatal(err)
+		t.Fail()
+	}
+}
+
+func Test_ShouldFailLogin(t *testing.T) {
+	repo, err := memory.NewMemoryRepository()
+
+	if err != nil {
+		fmt.Println(err)
+		panic("MemoryRepository could not be injected")
+	}
+	
+	service := user.NewUserService(repo)
+
+	token, err := service.Login("paolo@paolo.com", "12345asd")
+
+	if token != "" || err == nil {
+		t.Fatal(err)
+		t.Fail()
+	}
+}

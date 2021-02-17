@@ -1,6 +1,7 @@
 package memory
 
 import (
+	"bands-api/password"
 	"bands-api/user"
 )
 
@@ -17,7 +18,8 @@ func (r *userRepository) Create(user *user.User) error {
 }
 
 func (r *userRepository) GetByEmail(email string) (*user.User, error) {
-	us := user.User{ ID: "123456", Name: "Paolo", Email: "paolo@paolo.com", Password: "123456" }
+	hash, _ := password.GeneratePasswordHash("123456")
+	us := user.User{ ID: "123456", Name: "Paolo", Email: "paolo@paolo.com", Password: hash }
 	if email == us.Email {
 		return &us, nil
 	}
