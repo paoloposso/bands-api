@@ -3,6 +3,7 @@ module bands-api
 go 1.15
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/google/uuid v1.2.0
 	github.com/gookit/validate v1.2.8

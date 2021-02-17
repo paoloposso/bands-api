@@ -66,6 +66,8 @@ func Test_ShouldPerformLogin(t *testing.T) {
 
 	token, err := service.Login("paolo@paolo.com", "123456")
 
+	fmt.Println(token)
+	
 	if token == "" || err != nil {
 		t.Fatal(err)
 		t.Fail()
