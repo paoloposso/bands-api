@@ -49,7 +49,7 @@ func httpPort() string {
 	return fmt.Sprintf(":%s", port)
 }
 
-func chooseRepo() (user.UserRepository, error) {
+func chooseRepo() (user.Repository, error) {
 	env := os.Getenv("ENV")
 	fmt.Println(env)
 	if env == "TEST" {

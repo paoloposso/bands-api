@@ -7,18 +7,22 @@ import (
 )
 
 type userService struct {
-	userRepo UserRepository
+	userRepo Repository
 }
 
 // NewUserService returns a reference to userService struct
-func NewUserService(userRepo UserRepository) UserService {
+func NewUserService(userRepo Repository) Service {
 	return &userService{
 		userRepo,
 	}
 }
 
 func (s *userService) Register(user *User) error {
-	user.Id = hashing.GenerateUuid()
+	user.ID = hashing.GenerateUuid()
+	err := user.ValidateRegister()
+	if err != nil {
+		return err
+	}
 	hash, err := passwordutil.GeneratePasswordHash(user.Password)
 	if err != nil {
 		return err

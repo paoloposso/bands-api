@@ -8,7 +8,7 @@ import (
 	"bands-api/user"
 )
 
-func Test_ShouldGenerateUserId(t *testing.T) {
+func Test_ShouldGenerateUserID(t *testing.T) {
 	repo, err := memory.NewMemoryRepository()
 
 	if err != nil {
@@ -25,14 +25,14 @@ func Test_ShouldGenerateUserId(t *testing.T) {
 
 	service.Register(&user)
 
-	fmt.Println(user.Id)
+	fmt.Println(user.ID)
 
-	if user.Id == "" {
+	if user.ID == "" {
 		t.Fail()
 	}
 }
 
-func Test_ShouldBuild(t *testing.T) {
+func Test_ShouldFailUserValidation(t *testing.T) {
 	repo, err := memory.NewMemoryRepository()
 
 	if err != nil {
@@ -47,11 +47,9 @@ func Test_ShouldBuild(t *testing.T) {
 	user.Password = "123456"
 	user.Email = "paolo@paolo.com"
 
-	service.Register(&user)
+	err = service.Register(&user)
 
-	fmt.Println(user.Id)
-
-	if user.Id == "" {
+	if err == nil {
 		t.Fail()
 	}
 }
