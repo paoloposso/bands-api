@@ -3,9 +3,7 @@ package user
 import (
 	customerrors "bands-api/custom_errors"
 	"errors"
-	"os"
 	"strings"
-	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
@@ -55,6 +53,18 @@ func (s *userService) Login(email string, plainTextPassword string) (string, err
 	return "", &customerrors.InvalidEmailOrIncorrectPasswordError { Email: email }
 }
 
+func (s *userService) CheckLoginWithToken(tokenString string) (*jwt.Token, error) {
+	token, err := verifyToken(tokenString)
+	if err != nil {
+		v, _ := err.(*jwt.ValidationError)
+		if v.Errors == jwt.ValidationErrorExpired {
+			return nil, &customerrors.TokenExpiredError{}
+		}
+		return nil, err
+	}
+	return token, nil
+}
+
 func generateID() string {
     return strings.Replace(uuid.New().String(), "-", "", -1)
 }
@@ -67,21 +77,4 @@ func generatePasswordHash(plainTextPassword string) (string, error) {
 func checkPasswordHash(plaintTextPassword, hash string) bool {
     err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(plaintTextPassword))
     return err == nil
-}
-
-func createToken(user User) (string, error) {
-	type Claims struct {
-		Username string `json:"username"`
-		jwt.StandardClaims
-	}
-	atClaims := jwt.MapClaims{}
-	atClaims["exp"] = time.Now().Add(time.Minute * 2).Unix()
-	atClaims["username"] = user.Name
-	atClaims["email"] = user.Email
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(os.Getenv("JWT_SECRET")))
-	if err != nil {
-	   return "", err
-	}
-	return token, nil
 }

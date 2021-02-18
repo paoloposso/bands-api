@@ -19,3 +19,11 @@ type InvalidEmailOrIncorrectPasswordError struct {
 func (e *InvalidEmailOrIncorrectPasswordError) Error() string {
     return fmt.Sprintf("E-mail %s not found or password is invalid", e.Email)
 }
+
+// TokenExpiredError represents an error thrown when the email is nor registered or password is incorrect
+type TokenExpiredError struct {
+}
+
+func (e *TokenExpiredError) Error() string {
+    return fmt.Sprint("Token Expired!")
+}

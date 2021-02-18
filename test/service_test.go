@@ -24,9 +24,6 @@ func Test_ShouldGenerateUserID(t *testing.T) {
 	user.Email = "paolo@paolo.com"
 
 	service.Register(&user)
-
-	fmt.Println(user.ID)
-
 	if user.ID == "" {
 		t.Fail()
 	}
@@ -76,18 +73,29 @@ func Test_ShouldPerformLogin(t *testing.T) {
 
 func Test_ShouldFailLogin(t *testing.T) {
 	repo, err := memory.NewMemoryRepository()
+	if err != nil {
+		fmt.Println(err)
+		panic("MemoryRepository could not be injected")
+	}
+	service := user.NewUserService(repo)
+	token, err := service.Login("paolo@paolo.com", "12345asd")
+	if token != "" || err == nil {
+		t.Fatal(err)
+		t.Fail()
+	}
+}
+
+func Test_ShouldCheckToken(t *testing.T) {
+	repo, err := memory.NewMemoryRepository()
 
 	if err != nil {
 		fmt.Println(err)
 		panic("MemoryRepository could not be injected")
 	}
-	
 	service := user.NewUserService(repo)
-
-	token, err := service.Login("paolo@paolo.com", "12345asd")
-
-	if token != "" || err == nil {
-		t.Fatal(err)
-		t.Fail()
+	token, err := service.CheckLoginWithToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBhb2xvQHBhb2xvLmNvbSIsImV4cCI6MTYxMzYwNDk0NSwidXNlcl9pZCI6IjEyMzQ1NiIsInVzZXJuYW1lIjoiUGFvbG8ifQ.z2J6ROmJO5a8zFGXPNTK9UeAaktLzhF5Vv8PvRxrDQk")
+	fmt.Println(token)
+	if err != nil {
+		t.Error(err)
 	}
 }
