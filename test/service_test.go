@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	customerrors "bands-api/custom_errors"
 	"bands-api/repository/memory"
 	"bands-api/user"
 )
@@ -51,6 +52,7 @@ func Test_ShouldFailUserValidation(t *testing.T) {
 	}
 }
 
+var loginToken string = ""
 func Test_ShouldPerformLogin(t *testing.T) {
 	repo, err := memory.NewMemoryRepository()
 
@@ -63,7 +65,7 @@ func Test_ShouldPerformLogin(t *testing.T) {
 
 	token, err := service.Login("paolo@paolo.com", "123456")
 
-	fmt.Println(token)
+	loginToken = token
 	
 	if token == "" || err != nil {
 		t.Fatal(err)
@@ -85,7 +87,7 @@ func Test_ShouldFailLogin(t *testing.T) {
 	}
 }
 
-func Test_ShouldCheckToken(t *testing.T) {
+func Test_ShouldReceiveExpiredTokenError(t *testing.T) {
 	repo, err := memory.NewMemoryRepository()
 
 	if err != nil {
@@ -95,7 +97,31 @@ func Test_ShouldCheckToken(t *testing.T) {
 	service := user.NewUserService(repo)
 	token, err := service.CheckLoginWithToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBhb2xvQHBhb2xvLmNvbSIsImV4cCI6MTYxMzYwNDk0NSwidXNlcl9pZCI6IjEyMzQ1NiIsInVzZXJuYW1lIjoiUGFvbG8ifQ.z2J6ROmJO5a8zFGXPNTK9UeAaktLzhF5Vv8PvRxrDQk")
 	fmt.Println(token)
+	ok := false
+	if err != nil {
+		switch err.(type) {
+		case *customerrors.TokenExpiredError:
+			ok = true
+		}
+	}
+	if !ok {
+		t.Error("should have expired token")
+	}
+}
+
+func Test_ShouldValidateTokenOk(t *testing.T) {
+	repo, err := memory.NewMemoryRepository()
+
+	if err != nil {
+		fmt.Println(err)
+		panic("MemoryRepository could not be injected")
+	}
+	service := user.NewUserService(repo)
+	token, err := service.CheckLoginWithToken(loginToken)
 	if err != nil {
 		t.Error(err)
+	}
+	if token == nil {
+		t.Error("Should have returned valid token")
 	}
 }
