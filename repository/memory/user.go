@@ -1,4 +1,4 @@
-package memory
+package repositorymemory
 
 import (
 	"bands-api/user"

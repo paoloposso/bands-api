@@ -1,20 +1,20 @@
 package test
 
 import (
-	"fmt"
+	"strings"
 	"testing"
 
-	"bands-api/repository/memory"
+	repositorymemory "bands-api/repository/memory"
 	"bands-api/user"
 
 	"github.com/joho/godotenv"
 )
 
 var _ = godotenv.Load("../.env.test")
-var repo, err = memory.NewMemoryRepository()
+var repo, err = repositorymemory.NewMemoryRepository()
+var service = user.NewUserService(repo)
 
 func Test_ShouldGenerateUserID(t *testing.T) {
-	service := user.NewUserService(repo)
 	
 	user := user.User{}
 	user.Name = "Paolo"
@@ -28,8 +28,6 @@ func Test_ShouldGenerateUserID(t *testing.T) {
 }
 
 func Test_ShouldFailUserValidation(t *testing.T) {
-	service := user.NewUserService(repo)
-	
 	user := user.User{}
 	user.Name = "Paolo"
 	user.Password = "123456"
@@ -44,10 +42,8 @@ func Test_ShouldFailUserValidation(t *testing.T) {
 
 var loginToken string = ""
 func Test_ShouldPerformLogin(t *testing.T) {
-	service := user.NewUserService(repo)
 	token, err := service.Login("paolo@paolo.com", "123456")
 	loginToken = token
-	fmt.Println(loginToken)
 	if token == "" || err != nil {
 		t.Fatal(err)
 		t.Fail()
@@ -55,7 +51,6 @@ func Test_ShouldPerformLogin(t *testing.T) {
 }
 
 func Test_ShouldFailLogin(t *testing.T) {
-	service := user.NewUserService(repo)
 	token, err := service.Login("paolo@paolo.com", "12345asd")
 	if token != "" || err == nil {
 		t.Fatal(err)
@@ -64,15 +59,13 @@ func Test_ShouldFailLogin(t *testing.T) {
 }
 
 func Test_ShouldReceiveTokenError(t *testing.T) {
-	service := user.NewUserService(repo)
-	_, err = service.CheckLoginWithToken(fmt.Sprintf(loginToken))
+	_, err = service.CheckLoginWithToken(strings.Replace(loginToken, "a", "b", 1))
 	if err == nil {
 		t.Error("should have expired token")
 	}
 }
 
 func Test_ShouldValidateTokenOk(t *testing.T) {
-	service := user.NewUserService(repo)
 	token, err := service.CheckLoginWithToken(loginToken)
 	if err != nil {
 		t.Error(err)

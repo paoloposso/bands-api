@@ -1,7 +1,7 @@
 package servicefactories
 
 import (
-	"bands-api/repository/memory"
+	repositorymemory "bands-api/repository/memory"
 	"bands-api/user"
 	"os"
 )
@@ -18,7 +18,7 @@ func CreateUserService() user.Service {
 func chooseRepo() (user.Repository, error) {
 	env := os.Getenv("ENV")
 	if env == "TEST" {
-		return memory.NewMemoryRepository()
+		return repositorymemory.NewMemoryRepository()
 	}
-	return memory.NewMemoryRepository()
+	return repositorymemory.NewMemoryRepository()
 }
