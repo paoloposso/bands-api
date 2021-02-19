@@ -4,15 +4,14 @@ import (
 	"strings"
 	"testing"
 
-	repositorymemory "bands-api/repository/memory"
+	servicefactories "bands-api/api/service_factories"
 	"bands-api/user"
 
 	"github.com/joho/godotenv"
 )
 
 var _ = godotenv.Load("../.env.test")
-var repo, err = repositorymemory.NewMemoryRepository()
-var service = user.NewUserService(repo)
+var service = servicefactories.CreateUserService()
 
 func Test_ShouldGenerateUserID(t *testing.T) {
 	
@@ -33,7 +32,7 @@ func Test_ShouldFailUserValidation(t *testing.T) {
 	user.Password = "123456"
 	user.Email = "paolo@paolo.com"
 
-	err = service.Register(&user)
+	err := service.Register(&user)
 
 	if err == nil {
 		t.Fail()
@@ -59,7 +58,7 @@ func Test_ShouldFailLogin(t *testing.T) {
 }
 
 func Test_ShouldReceiveTokenError(t *testing.T) {
-	_, err = service.CheckLoginWithToken(strings.Replace(strings.Replace(loginToken, "a", "b", 2), "1", "x", 2))
+	_, err := service.CheckLoginWithToken(strings.Replace(strings.Replace(loginToken, "a", "b", 2), "1", "x", 2))
 	if err == nil {
 		t.Error("should not validate token")
 	}

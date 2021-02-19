@@ -2,8 +2,10 @@ package servicefactories
 
 import (
 	repositorymemory "bands-api/repository/memory"
+	repositorymongodb "bands-api/repository/mongodb"
 	"bands-api/user"
 	"os"
+	"strconv"
 )
 
 // CreateUserService is a Factory Method that returns a User Service implementation
@@ -20,5 +22,8 @@ func chooseRepo() (user.Repository, error) {
 	if env == "TEST" {
 		return repositorymemory.NewMemoryRepository()
 	}
-	return repositorymemory.NewMemoryRepository()
+	mongoURL := os.Getenv("MONGO_URL")
+	mongoDB := os.Getenv("MONGO_DB")
+	mongoTimeout, _ := strconv.Atoi(os.Getenv("MONGO_TIMEOUT"))
+	return repositorymongodb.NewMongoRepository(mongoURL, mongoDB, mongoTimeout)
 }

@@ -20,10 +20,19 @@ func (e *InvalidEmailOrIncorrectPasswordError) Error() string {
     return fmt.Sprintf("E-mail %s not found or password is invalid", e.Email)
 }
 
-// TokenExpiredError represents an error thrown when the email is nor registered or password is incorrect
-type TokenExpiredError struct {
+// InvalidTokenError represents an error thrown when the email is nor registered or password is incorrect or token is expired
+type InvalidTokenError struct {
 }
 
-func (e *TokenExpiredError) Error() string {
+func (e *InvalidTokenError) Error() string {
     return fmt.Sprint("Token Expired!")
+}
+
+// DBConnectionError represents an error thrown when the email is nor registered or password is incorrect
+type DBConnectionError struct {
+    Err error
+}
+
+func (e *DBConnectionError) Error() string {
+    return fmt.Sprintf("Error trying to connect to database: %e", e.Err)
 }
