@@ -33,3 +33,8 @@ jobs:
 
     - name: Test
       run: export ENV=TEST&&go test -v ./test
+
+env:
+  ENV: TEST
+  JWT_SECRET: 1SD5F18EW3IJFSOFSD
+  JWT_EXPIRY_MINUTES: 15

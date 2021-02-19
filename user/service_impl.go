@@ -56,10 +56,6 @@ func (s *userService) Login(email string, plainTextPassword string) (string, err
 func (s *userService) CheckLoginWithToken(tokenString string) (*jwt.Token, error) {
 	token, err := verifyToken(tokenString)
 	if err != nil {
-		v, _ := err.(*jwt.ValidationError)
-		if v.Errors == jwt.ValidationErrorExpired {
-			return nil, &customerrors.TokenExpiredError{}
-		}
 		return nil, err
 	}
 	return token, nil
