@@ -59,9 +59,9 @@ func Test_ShouldFailLogin(t *testing.T) {
 }
 
 func Test_ShouldReceiveTokenError(t *testing.T) {
-	_, err = service.CheckLoginWithToken(strings.Replace(loginToken, "a", "b", 1))
+	_, err = service.CheckLoginWithToken(strings.Replace(strings.Replace(loginToken, "a", "b", 2), "1", "x", 2))
 	if err == nil {
-		t.Error("should have expired token")
+		t.Error("should not validate token")
 	}
 }
 
