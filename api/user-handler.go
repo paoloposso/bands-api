@@ -61,7 +61,7 @@ func formatError(err error) (int, string) {
 		case *customerrors.InvalidDataError:
 			code = http.StatusBadRequest
 		case *customerrors.InvalidEmailOrIncorrectPasswordError:
-			code = http.StatusNoContent
+			code = http.StatusForbidden
 	}
 	return code, fmt.Sprintf("{ message: \"%s\" }", err)
 }

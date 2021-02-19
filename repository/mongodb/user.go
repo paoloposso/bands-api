@@ -39,10 +39,10 @@ func NewMongoRepository(mongoURL, database string, mongoTimeout int) (user.Repos
 	repo := &mongoRepository{
 		timeout: time.Duration(mongoTimeout)*time.Second,
 		database: database,
-	} 
+	}
 	client, err := newMongoDbClient(mongoURL, mongoTimeout)
 	if err != nil {
-		return nil, &customerrors.DBConnectionError{ Err: errors.WithStack(err) }
+		return nil, err
 	}
 	repo.client = client
 	return repo, nil
