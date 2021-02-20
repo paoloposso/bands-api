@@ -29,7 +29,7 @@ func RegisterUserHandler(userService user.Service, router *chi.Mux) {
 
 func (h *userHandler) Post(w http.ResponseWriter, r *http.Request) {
 	var u user.User
-	fmt.Println(r.Header)
+	// fmt.Println(r.Header)
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		code, msg := formatError(err)

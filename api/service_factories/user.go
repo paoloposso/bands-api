@@ -1,6 +1,7 @@
 package servicefactories
 
 import (
+	customerrors "bands-api/custom_errors"
 	repositorymemory "bands-api/repository/memory"
 	repositorymongodb "bands-api/repository/mongodb"
 	"bands-api/user"
@@ -12,7 +13,7 @@ import (
 func CreateUserService() user.Service {
 	repo, err := chooseRepo()
 	if err != nil {
-		panic(err)
+		panic(customerrors.DBConnectionError{ Err: err })
 	}
 	return user.NewUserService(repo)
 }
