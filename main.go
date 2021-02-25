@@ -8,7 +8,7 @@ import (
 	"syscall"
 
 	api "bands-api/api"
-	factories "bands-api/api/service_factories"
+	factories "bands-api/injection/services"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -24,8 +24,13 @@ func main() {
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 
-	api.RegisterUserHandler(factories.CreateUserService(), router)
-	
+	service, err := factories.CreateUserService()
+	if err != nil {
+		panic(err)
+	}
+	api.RegisterUserHandler(service, router)
+	api.RegisterHealthCheckHandler(router)
+
 	errs := make(chan error, 2)
 	go func() {
 		fmt.Println("Listening on port ", httpPort())

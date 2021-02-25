@@ -1,17 +1,18 @@
 package test
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
-	servicefactories "bands-api/api/service_factories"
+	servicefactories "bands-api/injection/services"
 	"bands-api/user"
 
 	"github.com/joho/godotenv"
 )
 
 var _ = godotenv.Load("../.env.test")
-var service = servicefactories.CreateUserService()
+var service, _ = servicefactories.CreateUserService()
 
 func Test_ShouldGenerateUserID(t *testing.T) {
 	
@@ -47,6 +48,7 @@ func Test_ShouldPerformLogin(t *testing.T) {
 		t.Fatal(err)
 		t.Fail()
 	}
+	fmt.Println(token)
 }
 
 func Test_ShouldFailLogin(t *testing.T) {

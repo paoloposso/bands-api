@@ -1,21 +1,18 @@
 version: "3"
 
 services:
-  bandapi:
+  bandsapi:
     build: .
-    image: bands
+    image: bands-api
     networks:
       - backend
-    environment: 
-      - MONGO_URL=mongodb
-      - JWT_SECRET=1SD5F18EW3IJFSOFSD
+    environment:
+      - JWT_SECRET=ad9Hyd$98879%JKYid7X987as
       - JWT_EXPIRY_MINUTES=15
-      - PORT=8000
       - MONGO_URL=mongodb://mongodb:27017
       - MONGO_DB=bands-users
-      - MONGO_TIMEOUT=30
     ports:
-      - "8000:8000"
+      - "9900:80"
     depends_on:
       - mongodb
   mongodb:

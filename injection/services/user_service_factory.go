@@ -10,12 +10,13 @@ import (
 )
 
 // CreateUserService is a Factory Method that returns a User Service implementation
-func CreateUserService() user.Service {
+func CreateUserService() (user.Service, error) {
 	repo, err := chooseRepo()
 	if err != nil {
-		panic(customerrors.DBConnectionError{ Err: err })
+		er := &customerrors.DBConnectionError { Err: err }
+		return nil, er
 	}
-	return user.NewUserService(repo)
+	return user.NewUserService(repo), nil
 }
 
 func chooseRepo() (user.Repository, error) {
