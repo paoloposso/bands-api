@@ -2,9 +2,9 @@ package servicefactories
 
 import (
 	customerrors "bands-api/custom_errors"
+	"bands-api/domain/user"
 	repositorymemory "bands-api/repository/memory"
 	repositorymongodb "bands-api/repository/mongodb"
-	"bands-api/user"
 	"os"
 	"strconv"
 )

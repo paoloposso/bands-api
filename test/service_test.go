@@ -2,11 +2,10 @@ package test
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
+	"bands-api/domain/user"
 	servicefactories "bands-api/injection/services"
-	"bands-api/user"
 
 	"github.com/joho/godotenv"
 )
@@ -59,19 +58,19 @@ func Test_ShouldFailLogin(t *testing.T) {
 	}
 }
 
-func Test_ShouldReceiveTokenError(t *testing.T) {
-	_, err := service.CheckLoginWithToken(strings.Replace(strings.Replace(loginToken, "a", "b", 2), "1", "x", 2))
-	if err == nil {
-		t.Error("should not validate token")
-	}
-}
+// func Test_ShouldReceiveTokenError(t *testing.T) {
+// 	_, err := service.CheckLoginWithToken(strings.Replace(strings.Replace(loginToken, "a", "b", 2), "1", "x", 2))
+// 	if err == nil {
+// 		t.Error("should not validate token")
+// 	}
+// }
 
-func Test_ShouldValidateTokenOk(t *testing.T) {
-	token, err := service.CheckLoginWithToken(loginToken)
-	if err != nil {
-		t.Error(err)
-	}
-	if token == nil {
-		t.Error("Should have returned valid token")
-	}
-}
+// func Test_ShouldValidateTokenOk(t *testing.T) {
+// 	token, err := service.CheckLoginWithToken(loginToken)
+// 	if err != nil {
+// 		t.Error(err)
+// 	}
+// 	if token == nil {
+// 		t.Error("Should have returned valid token")
+// 	}
+// }

@@ -2,10 +2,10 @@ package user
 
 import (
 	customerrors "bands-api/custom_errors"
+	login "bands-api/domain/user/login"
 	"errors"
 	"strings"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -44,21 +44,13 @@ func (s *userService) Login(email string, plainTextPassword string) (string, err
 		return "", err
 	}
 	if checkPasswordHash(plainTextPassword, user.Password) {
-		token, err := createToken(*user)
+		token, err := login.CreateToken(user.Email, user.Password)
 		if err != nil {
 			return "", errors.New("Error creating Token :" + err.Error())
 		}
 		return token, nil
 	}
 	return "", &customerrors.InvalidEmailOrIncorrectPasswordError { Email: email }
-}
-
-func (s *userService) CheckLoginWithToken(tokenString string) (*jwt.Token, error) {
-	token, err := verifyToken(tokenString)
-	if err != nil {
-		return nil, err
-	}
-	return token, nil
 }
 
 func generateID() string {

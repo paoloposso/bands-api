@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"bands-api/api/model"
-	"bands-api/user"
+	"bands-api/domain/user"
 
 	customerrors "bands-api/custom_errors"
 
@@ -62,6 +62,12 @@ func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	token, err := h.userService.Login(req.Email, req.Password)
+	if err != nil {
+		code, msg := formatError(err)
+		w.WriteHeader(code)
+		w.Write([]byte(msg))
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(encodeToBytes(model.LoginResponse { Token: token }))
 }

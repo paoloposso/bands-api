@@ -2,7 +2,7 @@ package repositorymongodb
 
 import (
 	customerrors "bands-api/custom_errors"
-	"bands-api/user"
+	"bands-api/domain/user"
 	"context"
 	"time"
 
