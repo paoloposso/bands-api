@@ -4,7 +4,7 @@ import (
 	customerrors "bands-api/custom_errors"
 	"bands-api/domain/user"
 	"context"
-	"fmt"
+	"log"
 	"time"
 
 	"github.com/pkg/errors"
@@ -81,6 +81,7 @@ func (r *mongoRepository) GetByID(id string) (*user.User, error) {
 	if err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user); err != nil {
 		return nil, err
 	}
+	user.Password = ""
 	return &user, nil
 }
 
@@ -94,7 +95,7 @@ func createIndex(client mongo.Client, databaseName string, field string, unique 
     collection :=  client.Database(databaseName).Collection(collection)
 	_, err := collection.Indexes().CreateOne(ctx, mod)
 	if err != nil {
-		fmt.Errorf("Error creating index: %s", err)
+		log.Fatal("Error creating index: %w", errors.WithStack(err))
 		return err
     }
 	return nil

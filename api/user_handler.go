@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	dto "bands-api/api/dto"
@@ -22,11 +21,12 @@ type userHandler struct {
 // RegisterUserHandler returns a handler struct that handles the api requests for the User Domain
 func RegisterUserHandler(userService user.Service, router *chi.Mux) {
 	handler := userHandler {userService: userService}
-	router.Post("/api/user", handler.create)
+	router.Post("/api/user", handler.register)
 	router.Post("/api/user/login", handler.login)
+	router.Get("/api/user/me", handler.validateToken)
 }
 
-func (h *userHandler) create(w http.ResponseWriter, r *http.Request) {
+func (h *userHandler) register(w http.ResponseWriter, r *http.Request) {
 	var u user.User
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
@@ -53,6 +53,27 @@ func (h *userHandler) create(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
+func (h *userHandler) validateToken(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	token := r.URL.Query().Get("token")
+	user, err := h.userService.GetDataByToken(token)
+	if err != nil {
+		code, msg := formatError(err)
+		w.WriteHeader(code)
+		w.Write([]byte(msg))
+		return
+	}
+	res, err := json.Marshal(user)
+	if err != nil {
+		code, msg := formatError(err)
+		w.WriteHeader(code)
+		w.Write([]byte(msg))
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}
+
 func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var login login.Login
@@ -69,8 +90,15 @@ func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(msg))
 		return
 	}
+	res, err := json.Marshal(&dto.LoginResponse { Token: token, Email: "test" })
+	if err != nil {
+		code, msg := formatError(err)
+		w.WriteHeader(code)
+		w.Write([]byte(msg))
+		return
+	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(encodeToBytes(dto.LoginResponse { Token: token }))
+	w.Write(res)
 }
 
 func formatError(err error) (int, string) {
@@ -81,6 +109,5 @@ func formatError(err error) (int, string) {
 		case *customerrors.InvalidEmailOrIncorrectPasswordError:
 			code = http.StatusForbidden
 	}
-	log.Fatal(err)
 	return code, fmt.Sprintf("{ message: \"%s\" }", err)
 }

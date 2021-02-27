@@ -52,7 +52,7 @@ func (s *userService) Login(loginData login.Login) (string, error) {
 		return "", &customerrors.InvalidEmailOrIncorrectPasswordError { Email: loginData.Email }
 	}
 	if checkPasswordHash(loginData.Password, user.Password) {
-		token, err := login.CreateToken(user.Email, user.Password)
+		token, err := login.CreateToken(user.Email, user.ID)
 		if err != nil {
 			return "", errors.New("Error creating Token :" + err.Error())
 		}
