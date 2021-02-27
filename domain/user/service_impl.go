@@ -2,9 +2,11 @@ package user
 
 import (
 	customerrors "bands-api/custom_errors"
-	login "bands-api/domain/user/login"
-	"errors"
+	"bands-api/domain/user/login"
+
 	"strings"
+
+	"github.com/pkg/errors"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -22,7 +24,6 @@ func NewUserService(userRepo Repository) Service {
 }
 
 func (s *userService) Register(user *User) error {
-	user.ID = generateID()
 	err := user.ValidateRegister()
 	if err != nil {
 		return err
@@ -31,6 +32,7 @@ func (s *userService) Register(user *User) error {
 	if err != nil {
 		return err
 	}
+	user.ID = generateID()
 	user.Password = hash
 	err = s.userRepo.Create(user)
 	user.Password = ""
@@ -38,19 +40,34 @@ func (s *userService) Register(user *User) error {
 }
 
 // Login method performs System User's Login using 
-func (s *userService) Login(email string, plainTextPassword string) (string, error) {
-	user, err := s.userRepo.GetByEmail(email)
+func (s *userService) Login(loginData login.Login) (string, error) {
+	err := loginData.ValidateLogin()
 	if err != nil {
 		return "", err
 	}
-	if checkPasswordHash(plainTextPassword, user.Password) {
+	user, err := s.userRepo.GetByEmail(loginData.Email)
+	if err != nil {
+		return "", err
+	} else if user == nil || user.Email == "" {
+		return "", &customerrors.InvalidEmailOrIncorrectPasswordError { Email: loginData.Email }
+	}
+	if checkPasswordHash(loginData.Password, user.Password) {
 		token, err := login.CreateToken(user.Email, user.Password)
 		if err != nil {
 			return "", errors.New("Error creating Token :" + err.Error())
 		}
 		return token, nil
 	}
-	return "", &customerrors.InvalidEmailOrIncorrectPasswordError { Email: email }
+	return "", &customerrors.InvalidEmailOrIncorrectPasswordError { Email: loginData.Email }
+}
+
+func (s *userService) GetDataByToken(token string) (*User, error) {
+	id, err := login.GetIDByToken(token)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	user, err := s.userRepo.GetByID(id)
+	return user, nil
 }
 
 func generateID() string {

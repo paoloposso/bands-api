@@ -3,10 +3,12 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
-	"bands-api/api/model"
+	dto "bands-api/api/dto"
 	"bands-api/domain/user"
+	"bands-api/domain/user/login"
 
 	customerrors "bands-api/custom_errors"
 
@@ -53,15 +55,14 @@ func (h *userHandler) create(w http.ResponseWriter, r *http.Request) {
 
 func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	var req model.LoginRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
+	var login login.Login
+	if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
 		code, msg := formatError(err)
 		w.WriteHeader(code)
 		w.Write([]byte(msg))
 		return
 	}
-	token, err := h.userService.Login(req.Email, req.Password)
+	token, err := h.userService.Login(login)
 	if err != nil {
 		code, msg := formatError(err)
 		w.WriteHeader(code)
@@ -69,7 +70,7 @@ func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(encodeToBytes(model.LoginResponse { Token: token }))
+	w.Write(encodeToBytes(dto.LoginResponse { Token: token }))
 }
 
 func formatError(err error) (int, string) {
@@ -80,5 +81,6 @@ func formatError(err error) (int, string) {
 		case *customerrors.InvalidEmailOrIncorrectPasswordError:
 			code = http.StatusForbidden
 	}
+	log.Fatal(err)
 	return code, fmt.Sprintf("{ message: \"%s\" }", err)
 }

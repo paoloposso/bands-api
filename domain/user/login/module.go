@@ -1,14 +1,14 @@
 package login
 
 import (
+	customerrors "bands-api/custom_errors"
+	"fmt"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
-
-type loginService struct {}
 
 // CreateToken creates a token for the logged User
 func CreateToken(email string, id string) (string, error) {
@@ -28,13 +28,18 @@ func CreateToken(email string, id string) (string, error) {
 	return token, nil
 }
 
-// VerifyToken gets a token sent by request and verifies if it's valid
-func VerifyToken(tokenString string) (*jwt.Token, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+// GetIDByToken gets a token sent by request and, if the token is valid, returns the user ID
+func GetIDByToken(tokenString string) (string, error) {
+	claims := jwt.MapClaims {}
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 	   return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 	if err != nil {
-	   return nil, err
+	   return "", err
 	}
-	return token, nil
+	if !token.Valid {
+		return "", &customerrors.InvalidTokenError {}
+	}
+	userID := fmt.Sprint(claims["user_id"])
+	return userID, nil
 }

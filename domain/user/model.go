@@ -8,7 +8,7 @@ import (
 
 // User struct contains the User data
 type User struct {
-	ID			string `bson:"_id" json:"id"`
+	ID			string `bson:"_id"`
 	Name 		string `validate:"required|minLen:3"`
 	Email 		string `validate:"email"`
 	Password 	string `validate:"required|minLen:8"`

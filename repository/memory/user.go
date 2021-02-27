@@ -20,11 +20,17 @@ func (r *userMemoryRepository) Create(user *user.User) error {
 
 func (r *userMemoryRepository) GetByEmail(email string) (*user.User, error) {
 	hash, _ := generatePasswordHash("123456")
-	us := user.User{ ID: "123456", Name: "Paolo", Email: "paolo@paolo.com", Password: hash }
+	us := user.User{ ID: "123456", Name: "Paolo", Email: "pvictorsys@gmail.com", Password: hash }
 	if email == us.Email {
 		return &us, nil
 	}
 	return nil, nil
+}
+
+func (r *userMemoryRepository) GetByID(id string) (*user.User, error) {
+	hash, _ := generatePasswordHash("123456")
+	us := user.User{ ID: "123456", Name: "Paolo", Email: "pvictorsys@gmail.com", Password: hash }
+	return &us, nil
 }
 
 func generatePasswordHash(plainTextPassword string) (string, error) {

@@ -22,7 +22,7 @@ func (e *InvalidEmailOrIncorrectPasswordError) Error() string {
 type InvalidTokenError struct {
 }
 func (e *InvalidTokenError) Error() string {
-    return fmt.Sprint("Token Expired!")
+    return fmt.Sprint("Invalid Token!")
 }
 
 // DBConnectionError represents an error thrown when the email is nor registered or password is incorrect

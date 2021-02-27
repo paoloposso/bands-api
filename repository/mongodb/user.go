@@ -4,9 +4,11 @@ import (
 	customerrors "bands-api/custom_errors"
 	"bands-api/domain/user"
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -45,6 +47,7 @@ func NewMongoRepository(mongoURL, database string, mongoTimeout int) (user.Repos
 		return nil, err
 	}
 	repo.client = client
+	createIndex(*repo.client, repo.database, "email", true)
 	return repo, nil
 }
 
@@ -60,5 +63,39 @@ func (r *mongoRepository) Create(user *user.User) error {
 }
 
 func (r *mongoRepository) GetByEmail(email string) (*user.User, error) {
-	return nil, nil
+	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
+	defer cancel()
+	var user user.User
+	collection := r.client.Database(r.database).Collection(collection)
+	if err := collection.FindOne(ctx, bson.M{"email": email}).Decode(&user); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *mongoRepository) GetByID(id string) (*user.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
+	defer cancel()
+	var user user.User
+	collection := r.client.Database(r.database).Collection(collection)
+	if err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user); err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func createIndex(client mongo.Client, databaseName string, field string, unique bool) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second * 10)
+	defer cancel()
+    mod := mongo.IndexModel{
+        Keys: bson.M{field: 1},
+		Options: options.Index().SetUnique(unique),
+	}
+    collection :=  client.Database(databaseName).Collection(collection)
+	_, err := collection.Indexes().CreateOne(ctx, mod)
+	if err != nil {
+		fmt.Errorf("Error creating index: %s", err)
+		return err
+    }
+	return nil
 }
