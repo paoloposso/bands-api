@@ -18,7 +18,7 @@ func Test_ShouldGenerateUserID(t *testing.T) {
 	
 	user := user.User{}
 	user.Name = "Paolo"
-	user.Password = "123456"
+	user.Password = "12345678"
 	user.Email = "paolo@paolo.com"
 
 	service.Register(&user)
