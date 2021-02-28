@@ -49,7 +49,7 @@ func (s *userService) Login(loginData login.Login) (string, error) {
 	if err != nil {
 		return "", err
 	} else if user == nil || user.Email == "" {
-		return "", &customerrors.InvalidEmailOrIncorrectPasswordError { Email: loginData.Email }
+		return "", &customerrors.UnauthorizedError { Err: errors.New("Inexistent e-mail or wrong password") }
 	}
 	if checkPasswordHash(loginData.Password, user.Password) {
 		token, err := login.CreateToken(user.Email, user.ID)
@@ -57,8 +57,9 @@ func (s *userService) Login(loginData login.Login) (string, error) {
 			return "", errors.New("Error creating Token :" + err.Error())
 		}
 		return token, nil
+	} else {
+		return "", &customerrors.UnauthorizedError { Err: errors.New("Inexistent e-mail or wrong password") }
 	}
-	return "", &customerrors.InvalidEmailOrIncorrectPasswordError { Email: loginData.Email }
 }
 
 func (s *userService) GetDataByToken(token string) (*User, error) {
@@ -75,7 +76,7 @@ func generateID() string {
 }
 
 func generatePasswordHash(plainTextPassword string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(plainTextPassword), 14)
+	bytes, err := bcrypt.GenerateFromPassword([]byte(plainTextPassword), 10)
 	return string(bytes), err
 }
 

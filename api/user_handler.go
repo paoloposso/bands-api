@@ -106,7 +106,7 @@ func formatError(err error) (int, string) {
 	switch err.(type) {
 		case *customerrors.InvalidDataError:
 			code = http.StatusBadRequest
-		case *customerrors.InvalidEmailOrIncorrectPasswordError:
+		case *customerrors.UnauthorizedError:
 			code = http.StatusForbidden
 	}
 	return code, fmt.Sprintf("{ message: \"%s\" }", err)

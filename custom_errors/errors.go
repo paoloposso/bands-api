@@ -10,14 +10,6 @@ func (e *InvalidDataError) Error() string {
     return fmt.Sprintf("Invalid data: %s", e.Message)
 }
 
-// InvalidEmailOrIncorrectPasswordError represents an error thrown when the email is nor registered or password is incorrect
-type InvalidEmailOrIncorrectPasswordError struct {
-    Email string
-}
-func (e *InvalidEmailOrIncorrectPasswordError) Error() string {
-    return fmt.Sprintf("E-mail %s not found or password is invalid", e.Email)
-}
-
 // InvalidTokenError represents an error thrown when the email is nor registered or password is incorrect or token is expired
 type InvalidTokenError struct {
 }
@@ -31,4 +23,12 @@ type DBConnectionError struct {
 }
 func (e *DBConnectionError) Error() string {
     return fmt.Sprintf("Error trying to connect to database: %s", e.Err.Error())
+}
+
+// UnauthorizedError represents an error thrown when the token is invalid or expired
+type UnauthorizedError struct {
+    Err error
+}
+func (e *UnauthorizedError) Error() string {
+    return fmt.Sprintf("Unauthorized: %s", e.Err)
 }

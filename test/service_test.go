@@ -51,7 +51,7 @@ func Test_ShouldPerformLogin(t *testing.T) {
 }
 
 func Test_ShouldFailLogin(t *testing.T) {
-	token, err := service.Login(login.Login{ Email: "pvictorsys@gmail.com", Password: "12345678" })
+	token, err := service.Login(login.Login{ Email: "pvictorsys@gmail.com", Password: "12345" })
 	if token != "" || err == nil {
 		t.Fatal(err)
 		t.Fail()
