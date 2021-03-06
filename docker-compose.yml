@@ -7,7 +7,7 @@ services:
     networks:
       - backend
     environment:
-      - JWT_SECRET=ad9Hyd$98879%JKYid7X987as
+      - JWT_SECRET=ad9Hyd98879JKYid7X987as
       - JWT_EXPIRY_MINUTES=15
       - MONGO_URL=mongodb://mongodb:27017
       - MONGO_DB=bands-users

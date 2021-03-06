@@ -90,7 +90,7 @@ func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(msg))
 		return
 	}
-	res, err := json.Marshal(&dto.LoginResponse { Token: token, Email: "test" })
+	res, err := json.Marshal(&dto.LoginResponse { Token: token, Email: login.Email })
 	if err != nil {
 		code, msg := formatError(err)
 		w.WriteHeader(code)
@@ -109,5 +109,5 @@ func formatError(err error) (int, string) {
 		case *customerrors.UnauthorizedError:
 			code = http.StatusForbidden
 	}
-	return code, fmt.Sprintf("{ message: \"%s\" }", err)
+	return code, fmt.Sprintf("{ \"message\": \"%s\" }", err)
 }

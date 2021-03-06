@@ -23,6 +23,7 @@ func NewUserService(userRepo Repository) Service {
 	}
 }
 
+// Register method performs User's creation in the system
 func (s *userService) Register(user *User) error {
 	err := user.ValidateRegister()
 	if err != nil {
@@ -39,7 +40,7 @@ func (s *userService) Register(user *User) error {
 	return err
 }
 
-// Login method performs System User's Login using 
+// Login method performs System User's Login, receiving the credentials and returning the token
 func (s *userService) Login(loginData login.Login) (string, error) {
 	err := loginData.ValidateLogin()
 	if err != nil {
@@ -62,6 +63,7 @@ func (s *userService) Login(loginData login.Login) (string, error) {
 	}
 }
 
+// GetDataByToken gets the User data (except password) by receiving the authorization token obtained via Login
 func (s *userService) GetDataByToken(token string) (*User, error) {
 	id, err := login.GetIDByToken(token)
 	if err != nil {

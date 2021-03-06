@@ -10,7 +10,7 @@ import (
 type User struct {
 	ID			string `bson:"_id"`
 	Name 		string `validate:"required|minLen:3"`
-	Email 		string `validate:"email"`
+	Email 		string `validate:"required|email"`
 	Password 	string `validate:"required|minLen:8"`
 }
 
