@@ -5,14 +5,18 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 
 	api "bands-api/api"
-	factories "bands-api/injection/services"
+	"bands-api/domain/user"
+
+	repositorymongodb "bands-api/infrastructure/repository/mongodb"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/golobby/container"
 	"github.com/joho/godotenv"
 )
 
@@ -32,14 +36,9 @@ func main() {
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
-	  }))
+	}))
 
-	service, err := factories.CreateUserService()
-	if err != nil {
-		panic(err)
-	}
-	api.RegisterUserHandler(service, router)
-	api.RegisterHealthCheckHandler(router)
+	injectDependencies(router)
 
 	errs := make(chan error, 2)
 	go func() {
@@ -60,4 +59,29 @@ func httpPort() string {
 		port = os.Getenv("PORT")
 	}
 	return fmt.Sprintf(":%s", port)
+}
+
+func injectDependencies(router *chi.Mux) {
+	container.Singleton(func() user.Repository {
+		mongoURL := os.Getenv("MONGO_URL")
+		mongoDB := os.Getenv("MONGO_DB")
+		mongoTimeout, _ := strconv.Atoi(os.Getenv("MONGO_TIMEOUT"))
+		repo, err := repositorymongodb.NewMongoRepository(mongoURL, mongoDB, mongoTimeout)
+		if err != nil {
+			panic(err)
+		}
+		return repo
+	})
+	container.Singleton(func() user.Service {
+		var repo user.Repository 
+		container.Make(&repo)
+		service := user.NewUserService(repo)
+		return service
+	})
+
+	var service user.Service
+	container.Make(&service)
+	
+	api.RegisterUserHandler(service, router)
+	api.RegisterHealthCheckHandler(router)
 }

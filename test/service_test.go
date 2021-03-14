@@ -1,18 +1,45 @@
 package test
 
 import (
+	"os"
 	"strings"
 	"testing"
 
 	"bands-api/domain/user"
 	"bands-api/domain/user/login"
-	servicefactories "bands-api/injection/services"
 
+	repo "bands-api/infrastructure/repository/memory"
+
+	"github.com/golobby/container"
 	"github.com/joho/godotenv"
 )
 
 var _ = godotenv.Load("../.env.test")
-var service, _ = servicefactories.CreateUserService()
+var service user.Service
+
+func inject(){
+	container.Singleton(func() user.Repository {
+		repo, err := repo.NewMemoryRepository()
+		if err != nil {
+			panic(err)
+		}
+		return repo
+	})
+	container.Singleton(func() user.Service {
+		var repo user.Repository 
+		container.Make(&repo)
+		service := user.NewUserService(repo)
+		return service
+	})
+
+	container.Make(&service)
+}
+
+func TestMain(m *testing.M) {
+	inject()
+	code := m.Run()
+	os.Exit(code)
+}
 
 func Test_ShouldGenerateUserID(t *testing.T) {
 	
@@ -68,5 +95,17 @@ func Test_ShouldReceiveTokenError(t *testing.T) {
 func Test_ShouldValidateTokenOk(t *testing.T) {
 	if user, err := service.GetDataByToken(loginToken); err != nil || user == nil {
 		t.Error(err)
+	}
+}
+
+func Test_ShouldReturnErrorDuplicateEmail(t *testing.T) {
+	user := user.User{}
+	user.Name = "Paolo"
+	user.Password = "12345678"
+	user.Email = "pvictorsys@gmail.com"
+
+	err := service.Register(&user)
+	if err == nil {
+		t.Fail()
 	}
 }

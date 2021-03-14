@@ -2,7 +2,7 @@ FROM golang:1.15-alpine
 
 WORKDIR $GOPATH/src/github.com/paoloposso/bands-api
 
-ENV MONGO_TIMEOUT=15
+ENV MONGO_TIMEOUT=120
 ENV PORT=80
 
 COPY go.mod .

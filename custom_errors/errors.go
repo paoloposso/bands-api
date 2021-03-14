@@ -32,3 +32,11 @@ type UnauthorizedError struct {
 func (e *UnauthorizedError) Error() string {
     return fmt.Sprintf("Unauthorized: %s", e.Err)
 }
+
+// EmailAlreadyTakenError represents an error thrown when the informed e-mail already exists
+type EmailAlreadyTakenError struct {
+    Err error
+}
+func (e *EmailAlreadyTakenError) Error() string {
+    return "E-mail already taken"
+}

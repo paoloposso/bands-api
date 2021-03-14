@@ -108,6 +108,8 @@ func formatError(err error) (int, string) {
 			code = http.StatusBadRequest
 		case *customerrors.UnauthorizedError:
 			code = http.StatusForbidden
+		case *customerrors.EmailAlreadyTakenError:
+			code = http.StatusConflict
 	}
 	return code, fmt.Sprintf("{ \"message\": \"%s\" }", err)
 }

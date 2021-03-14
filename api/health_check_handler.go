@@ -1,7 +1,6 @@
 package api
 
 import (
-	servicefactories "bands-api/injection/services"
 	"encoding/json"
 	"net/http"
 
@@ -21,12 +20,13 @@ func RegisterHealthCheckHandler(router *chi.Mux) {
 func get(w http.ResponseWriter, r *http.Request) {
 	health := health{ IsOk: true, Message: "OK" }
 	cod := http.StatusOK
-	_, err := servicefactories.CreateUserService()	
-	if err != nil {
-		cod = http.StatusInternalServerError
-		health.IsOk = false
-		health.Message = err.Error()
-	}
+	// var service user.Service
+	// _, err := container.Make(&service)
+	// if err != nil {
+	// 	cod = http.StatusInternalServerError
+	// 	health.IsOk = false
+	// 	health.Message = err.Error()
+	// }
 	res, _ := json.Marshal(health)
 	w.WriteHeader(cod)
 	w.Write(res)

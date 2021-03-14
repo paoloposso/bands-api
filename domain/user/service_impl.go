@@ -29,6 +29,10 @@ func (s *userService) Register(user *User) error {
 	if err != nil {
 		return err
 	}
+	existingUser, err := s.userRepo.GetByEmail(user.Email)
+	if (existingUser != nil) {
+		return &customerrors.EmailAlreadyTakenError { Err: errors.New("E-mail already taken") }
+	}
 	hash, err := generatePasswordHash(user.Password)
 	if err != nil {
 		return err
