@@ -1,4 +1,4 @@
-package model
+package api
 
 // LoginRequest has the Login information provided by the requesting User
 type LoginRequest struct {

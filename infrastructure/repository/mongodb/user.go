@@ -5,6 +5,7 @@ import (
 	"bands-api/domain/user"
 	"context"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -16,7 +17,7 @@ import (
 
 const collection string = "users"
 
-type mongoRepository struct {
+type mongoUserRepository struct {
 	client *mongo.Client
 	database string
 	timeout time.Duration
@@ -36,9 +37,9 @@ func newMongoDbClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) 
 	return client, err
 }
 
-// NewMongoRepository returns a reference to an implementation of UserRepository interface that implements the comunication with MongoDb for the User domain
-func NewMongoRepository(mongoURL, database string, mongoTimeout int) (user.Repository, error)  {
-	repo := &mongoRepository{
+// NewMongoUserRepository returns a reference to an implementation of UserRepository interface that implements the comunication with MongoDb for the User domain
+func NewMongoUserRepository(mongoURL, database string, mongoTimeout int) (user.Repository, error)  {
+	repo := &mongoUserRepository{
 		timeout: time.Duration(mongoTimeout)*time.Second,
 		database: database,
 	}
@@ -51,7 +52,7 @@ func NewMongoRepository(mongoURL, database string, mongoTimeout int) (user.Repos
 	return repo, nil
 }
 
-func (r *mongoRepository) Create(user *user.User) error {
+func (r *mongoUserRepository) Create(user *user.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
 	collection := r.client.Database(r.database).Collection(collection)
@@ -62,18 +63,21 @@ func (r *mongoRepository) Create(user *user.User) error {
 	return nil
 }
 
-func (r *mongoRepository) GetByEmail(email string) (*user.User, error) {
+func (r *mongoUserRepository) GetByEmail(email string) (*user.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
 	var user user.User
 	collection := r.client.Database(r.database).Collection(collection)
 	if err := collection.FindOne(ctx, bson.M{"email": email}).Decode(&user); err != nil {
+		if strings.Contains(err.Error(), "no documents") {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return &user, nil
 }
 
-func (r *mongoRepository) GetByID(id string) (*user.User, error) {
+func (r *mongoUserRepository) GetByID(id string) (*user.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
 	var user user.User

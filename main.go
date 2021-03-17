@@ -10,6 +10,7 @@ import (
 
 	api "bands-api/api"
 	"bands-api/domain/user"
+	"bands-api/infrastructure/tokenization"
 
 	repositorymongodb "bands-api/infrastructure/repository/mongodb"
 
@@ -62,23 +63,29 @@ func httpPort() string {
 }
 
 func injectDependencies(router *chi.Mux) {
-	container.Singleton(func() user.Repository {
+	container.Transient(func() user.Repository {
 		mongoURL := os.Getenv("MONGO_URL")
 		mongoDB := os.Getenv("MONGO_DB")
 		mongoTimeout, _ := strconv.Atoi(os.Getenv("MONGO_TIMEOUT"))
-		repo, err := repositorymongodb.NewMongoRepository(mongoURL, mongoDB, mongoTimeout)
+		repo, err := repositorymongodb.NewMongoUserRepository(mongoURL, mongoDB, mongoTimeout)
 		if err != nil {
 			panic(err)
 		}
 		return repo
 	})
-	container.Singleton(func() user.Service {
-		var repo user.Repository 
-		container.Make(&repo)
-		service := user.NewUserService(repo)
+	container.Transient(func() user.TokenizationService {
+		service := tokenization.NewUserLoginTokenizationService()
 		return service
 	})
-
+	container.Transient(func() user.Service {
+		var repo user.Repository 
+		container.Make(&repo)
+		var tokenizationService user.TokenizationService 
+		container.Make(&tokenizationService)
+		service := user.NewUserService(repo, tokenizationService)
+		return service
+	})
+	
 	var service user.Service
 	container.Make(&service)
 	

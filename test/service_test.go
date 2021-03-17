@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"bands-api/domain/user"
-	"bands-api/domain/user/login"
 
 	repo "bands-api/infrastructure/repository/memory"
+	"bands-api/infrastructure/tokenization"
 
 	"github.com/golobby/container"
 	"github.com/joho/godotenv"
@@ -25,10 +25,16 @@ func inject(){
 		}
 		return repo
 	})
+	container.Transient(func() user.TokenizationService {
+		service := tokenization.NewUserLoginTokenizationService()
+		return service
+	})
 	container.Singleton(func() user.Service {
 		var repo user.Repository 
 		container.Make(&repo)
-		service := user.NewUserService(repo)
+		var tokenizationService user.TokenizationService 
+		container.Make(&tokenizationService)
+		service := user.NewUserService(repo, tokenizationService)
 		return service
 	})
 
@@ -69,7 +75,7 @@ func Test_ShouldFailUserValidation(t *testing.T) {
 
 var loginToken string = ""
 func Test_ShouldPerformLogin(t *testing.T) {
-	token, err := service.Login(login.Login{ Email: "pvictorsys@gmail.com", Password: "123456" })
+	token, err := service.Login("pvictorsys@gmail.com", "123456")
 	loginToken = token
 	if token == "" || err != nil {
 		t.Fatal(err)
@@ -78,7 +84,7 @@ func Test_ShouldPerformLogin(t *testing.T) {
 }
 
 func Test_ShouldFailLogin(t *testing.T) {
-	token, err := service.Login(login.Login{ Email: "pvictorsys@gmail.com", Password: "12345" })
+	token, err := service.Login("pvictorsys@gmail.com", "12345")
 	if token != "" || err == nil {
 		t.Fatal(err)
 		t.Fail()
