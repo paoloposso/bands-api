@@ -45,7 +45,7 @@ func (u *userLoginTokenizationService) GetUserIDByToken(tokenString string) (str
 	   return "", err
 	}
 	if !token.Valid {
-		return "", &customerrors.InvalidTokenError {}
+		return "", &customerrors.DomainError { ErrorType: customerrors.InvalidTokenError }
 	}
 	userID := fmt.Sprint(claims["user_id"])
 	return userID, nil

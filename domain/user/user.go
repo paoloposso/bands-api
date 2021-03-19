@@ -18,7 +18,7 @@ type User struct {
 func (user User) ValidateRegister() error {
 	v := validate.Struct(user)
 	if !v.Validate() {
-		return &customerrors.InvalidDataError { Message: v.Errors.String() }
+		return &customerrors.DomainError { Message: v.Errors.String(), ErrorType: customerrors.InvalidDataError }
 	}
 	return nil
 }

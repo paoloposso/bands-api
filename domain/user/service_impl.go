@@ -32,7 +32,7 @@ func (s *userService) Register(user *User) error {
 	}
 	existingUser, err := s.userRepo.GetByEmail(user.Email)
 	if (existingUser != nil) {
-		return &customerrors.EmailAlreadyTakenError { Err: errors.New("E-mail already taken") }
+		return &customerrors.DomainError { Message: "E-mail already taken", ErrorType: customerrors.EmailAlreadyTakenError }
 	}
 	hash, err := generatePasswordHash(user.Password)
 	if err != nil {
@@ -55,7 +55,10 @@ func (s *userService) Login(email string, password string) (string, error) {
 	if err != nil {
 		return "", err
 	} else if user == nil || user.Email == "" {
-		return "", &customerrors.UnauthorizedError { Err: errors.New("Inexistent e-mail or wrong password") }
+		return "", &customerrors.DomainError { 
+				Message: "Inexistent e-mail or wrong password",
+				ErrorType: customerrors.UnauthorizedError,
+			}
 	}
 	if checkPasswordHash(password, user.Password) {
 		token, err := s.tokenizationService.CreateUserToken(user.Email, user.ID)
@@ -64,7 +67,10 @@ func (s *userService) Login(email string, password string) (string, error) {
 		}
 		return token, nil
 	} else {
-		return "", &customerrors.UnauthorizedError { Err: errors.New("Inexistent e-mail or wrong password") }
+		return "", &customerrors.DomainError { 
+				Message: "Inexistent e-mail or wrong password",
+				ErrorType: customerrors.UnauthorizedError,
+			}
 	}
 }
 
@@ -101,7 +107,7 @@ func validateLogin(email string, password string) error {
 		errors = append(errors, "Password is required")
 	}
 	if (len(errors) > 0) {
-		return &customerrors.InvalidDataError { Message: strings.Join(errors, ";") }
+		return &customerrors.DomainError{ Message: strings.Join(errors, ";"), ErrorType: customerrors.InvalidDataError }
 	}
 	return nil
 }

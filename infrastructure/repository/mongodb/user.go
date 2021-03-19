@@ -1,7 +1,6 @@
 package repositorymongodb
 
 import (
-	customerrors "bands-api/custom_errors"
 	"bands-api/domain/user"
 	"context"
 	"log"
@@ -58,7 +57,7 @@ func (r *mongoUserRepository) Create(user *user.User) error {
 	collection := r.client.Database(r.database).Collection(collection)
 	_, err := collection.InsertOne(ctx, user)
 	if err != nil{
-		return &customerrors.DBConnectionError{ Err: errors.WithStack(err) }
+		return errors.WithStack(err) 
 	}
 	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"reflect"
 
 	api "bands-api/api/dto"
 	dto "bands-api/api/dto"
@@ -104,12 +105,25 @@ func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 
 func formatError(err error) (int, string) {
 	code := http.StatusInternalServerError
-	switch err.(type) {
-		case *customerrors.InvalidDataError:
+	errType := reflect.TypeOf(err)
+	var domainErr customerrors.DomainError
+	if errType == reflect.TypeOf(domainErr) {
+		return formatDomainError(err)
+	}
+	return code, fmt.Sprintf("{ \"message\": \"%s\" }", err)
+}
+
+func formatDomainError(err error) (int, string) {
+	domainError := err.(*customerrors.DomainError)
+
+	code := http.StatusInternalServerError 
+
+	switch domainError.ErrorType {
+		case customerrors.InvalidDataError:
 			code = http.StatusBadRequest
-		case *customerrors.UnauthorizedError:
+		case customerrors.UnauthorizedError:
 			code = http.StatusForbidden
-		case *customerrors.EmailAlreadyTakenError:
+		case customerrors.EmailAlreadyTakenError:
 			code = http.StatusConflict
 	}
 	return code, fmt.Sprintf("{ \"message\": \"%s\" }", err)
