@@ -92,7 +92,7 @@ func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(msg))
 		return
 	}
-	res, err := json.Marshal(&dto.LoginResponse { Token: token, Email: login.Email })
+	res, err := json.Marshal(&dto.LoginResponse { Token: token })
 	if err != nil {
 		code, msg := formatError(err)
 		w.WriteHeader(code)
