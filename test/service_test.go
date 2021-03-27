@@ -86,7 +86,11 @@ func Test_ShouldPerformLogin(t *testing.T) {
 func Test_ShouldFailLogin(t *testing.T) {
 	_, token, err := service.Login("pvictorsys@gmail.com", "12345")
 	if token != "" || err == nil {
-		t.Fatal(err)
+		t.Fatal("should return error")
+		t.Fail()
+	}
+	if (!strings.Contains(err.Error(), "Inexistent")) {
+		t.Fatalf("should return Inexistent, returned %s instead", err.Error())
 		t.Fail()
 	}
 }

@@ -23,3 +23,12 @@ Receives the email and the password in plain text and, if the user is correctly 
 Data:
 - E-mail
 - Password
+
+## Enironment Variables
+These are the Env Vars necessary to run the project, with sample data:
+JWT_SECRET=XXAXXXXXASD453543
+JWT_EXPIRY_MINUTES=30
+PORT=5000
+MONGO_URL=mongodb://localhost:27017
+MONGO_DB=bands-db-sample
+MONGO_TIMEOUT=5
