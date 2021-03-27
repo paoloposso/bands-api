@@ -104,11 +104,12 @@ func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 
 func formatError(err error) (int, string) {
 	code := http.StatusInternalServerError
-	errType := reflect.TypeOf(err)
-	var domainErr customerrors.DomainError
-	if errType == reflect.TypeOf(domainErr) {
+	errType := reflect.TypeOf(err).String()
+
+	if errType == "*customerrors.DomainError" {
 		return formatDomainError(err)
 	}
+	
 	return code, fmt.Sprintf("{ \"message\": \"%s\" }", err)
 }
 

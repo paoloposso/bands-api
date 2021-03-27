@@ -73,10 +73,12 @@ func injectDependencies(router *chi.Mux) {
 		}
 		return repo
 	})
+	
 	container.Transient(func() user.TokenizationService {
 		service := tokenization.NewUserLoginTokenizationService()
 		return service
 	})
+
 	container.Transient(func() user.Service {
 		var repo user.Repository 
 		container.Make(&repo)
