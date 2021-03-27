@@ -9,8 +9,8 @@ import (
 	"syscall"
 
 	api "bands-api/api"
-	"bands-api/domain/user"
 	"bands-api/infrastructure/tokenization"
+	"bands-api/user"
 
 	repositorymongodb "bands-api/infrastructure/repository/mongodb"
 
