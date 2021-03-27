@@ -84,7 +84,6 @@ func (r *mongoUserRepository) GetByID(id string) (*user.User, error) {
 	if err := collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user); err != nil {
 		return nil, err
 	}
-	user.Password = ""
 	return &user, nil
 }
 

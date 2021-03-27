@@ -84,7 +84,7 @@ func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(msg))
 		return
 	}
-	token, err := h.userService.Login(login.Email, login.Password)
+	_, token, err := h.userService.Login(login.Email, login.Password)
 	if err != nil {
 		code, msg := formatError(err)
 		w.WriteHeader(code)

@@ -46,16 +46,16 @@ func (s *userService) Register(user *User) error {
 }
 
 // Login method performs System User's Login, receiving the credentials and returning the token
-func (s *userService) Login(email string, password string) (string, error) {
+func (s *userService) Login(email string, password string) (*User, string, error) {
 	err := validateLogin(email, password)
 	if err != nil {
-		return "", err
+		return nil, "", err
 	}
 	user, err := s.userRepo.GetByEmail(email)
 	if err != nil {
-		return "", err
+		return nil, "", err
 	} else if user == nil || user.Email == "" {
-		return "", &customerrors.DomainError { 
+		return nil, "", &customerrors.DomainError { 
 				Message: "Inexistent e-mail or wrong password",
 				ErrorType: customerrors.UnauthorizedError,
 			}
@@ -63,11 +63,13 @@ func (s *userService) Login(email string, password string) (string, error) {
 	if checkPasswordHash(password, user.Password) {
 		token, err := s.tokenizationService.CreateUserToken(user.Email, user.ID)
 		if err != nil {
-			return "", errors.New("Error creating Token :" + err.Error())
+			return nil, "", errors.New("Error creating Token :" + err.Error())
 		}
-		return token, nil
+
+		user.Password = ""
+		return user, token, nil
 	} else {
-		return "", &customerrors.DomainError { 
+		return nil, "", &customerrors.DomainError { 
 				Message: "Inexistent e-mail or wrong password",
 				ErrorType: customerrors.UnauthorizedError,
 			}
@@ -81,6 +83,8 @@ func (s *userService) GetDataByToken(token string) (*User, error) {
 		return nil, errors.WithStack(err)
 	}
 	user, err := s.userRepo.GetByID(id)
+
+	user.Password = ""
 	return user, nil
 }
 
@@ -100,6 +104,7 @@ func checkPasswordHash(plaintTextPassword, hash string) bool {
 
 func validateLogin(email string, password string) error {
 	var errors []string
+	
 	if email == "" {
 		errors = append(errors, "E-mail is required")
 	}
@@ -109,5 +114,6 @@ func validateLogin(email string, password string) error {
 	if (len(errors) > 0) {
 		return &customerrors.DomainError{ Message: strings.Join(errors, ";"), ErrorType: customerrors.InvalidDataError }
 	}
+
 	return nil
 }

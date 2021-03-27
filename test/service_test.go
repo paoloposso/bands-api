@@ -75,7 +75,7 @@ func Test_ShouldFailUserValidation(t *testing.T) {
 
 var loginToken string = ""
 func Test_ShouldPerformLogin(t *testing.T) {
-	token, err := service.Login("pvictorsys@gmail.com", "123456")
+	_, token, err := service.Login("pvictorsys@gmail.com", "123456")
 	loginToken = token
 	if token == "" || err != nil {
 		t.Fatal(err)
@@ -84,7 +84,7 @@ func Test_ShouldPerformLogin(t *testing.T) {
 }
 
 func Test_ShouldFailLogin(t *testing.T) {
-	token, err := service.Login("pvictorsys@gmail.com", "12345")
+	_, token, err := service.Login("pvictorsys@gmail.com", "12345")
 	if token != "" || err == nil {
 		t.Fatal(err)
 		t.Fail()
