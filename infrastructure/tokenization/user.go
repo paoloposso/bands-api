@@ -2,7 +2,7 @@ package tokenization
 
 import (
 	customerrors "bands-api/custom_errors"
-	"bands-api/domain/user"
+	"bands-api/user"
 	"fmt"
 	"os"
 	"strconv"

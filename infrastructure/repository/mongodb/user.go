@@ -1,7 +1,7 @@
 package repositorymongodb
 
 import (
-	"bands-api/domain/user"
+	"bands-api/user"
 	"context"
 	"log"
 	"strings"

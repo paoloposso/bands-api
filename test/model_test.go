@@ -3,7 +3,7 @@ package test
 import (
 	"testing"
 
-	"bands-api/domain/user"
+	"bands-api/user"
 )
 
 func Test_ShoulFailUserRegisterValidation(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"bands-api/domain/user"
+	"bands-api/user"
 
 	repo "bands-api/infrastructure/repository/memory"
 	"bands-api/infrastructure/tokenization"

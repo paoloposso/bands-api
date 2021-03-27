@@ -6,9 +6,8 @@ import (
 	"net/http"
 	"reflect"
 
-	api "bands-api/api/dto"
 	dto "bands-api/api/dto"
-	"bands-api/domain/user"
+	"bands-api/user"
 
 	customerrors "bands-api/custom_errors"
 
@@ -78,7 +77,7 @@ func (h *userHandler) validateToken(w http.ResponseWriter, r *http.Request) {
 
 func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-	var login api.LoginRequest
+	var login dto.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
 		code, msg := formatError(err)
 		w.WriteHeader(code)
@@ -115,9 +114,7 @@ func formatError(err error) (int, string) {
 
 func formatDomainError(err error) (int, string) {
 	domainError := err.(*customerrors.DomainError)
-
 	code := http.StatusInternalServerError 
-
 	switch domainError.ErrorType {
 		case customerrors.InvalidDataError:
 			code = http.StatusBadRequest
