@@ -1,7 +1,7 @@
 package user
 
 import (
-	customerrors "bands-api/custom_errors"
+	customerrors "bands-auth-api/custom_errors"
 
 	"github.com/gookit/validate"
 )

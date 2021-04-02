@@ -14,9 +14,17 @@ type health struct {
 
 // RegisterHealthCheckHandler returns a handler struct that handles the api requests for the User Domain
 func RegisterHealthCheckHandler(router *chi.Mux) {
-	router.Get("/api/is-alive", get)
+	router.Get("/api/v1/is-alive", get)
 }
 
+// health-check - Health Check
+// @Summary This API can be used as health check for this application.
+// @Description Tells if the chi-swagger APIs are working or not.
+// @Tags chi-swagger
+// @Accept  json
+// @Produce  json
+// @Success 200 {string} response "api response"
+// @Router /is-alive [get]
 func get(w http.ResponseWriter, r *http.Request) {
 	health := health{ IsOk: true, Message: "OK" }
 	cod := http.StatusOK

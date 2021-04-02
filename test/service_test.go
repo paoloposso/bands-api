@@ -5,10 +5,10 @@ import (
 	"strings"
 	"testing"
 
-	"bands-api/user"
+	"bands-auth-api/user"
 
-	repo "bands-api/infrastructure/repository/memory"
-	"bands-api/infrastructure/tokenization"
+	repo "bands-auth-api/infrastructure/repository/memory"
+	"bands-auth-api/infrastructure/tokenization"
 
 	"github.com/golobby/container"
 	"github.com/joho/godotenv"

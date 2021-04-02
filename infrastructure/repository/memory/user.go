@@ -1,7 +1,7 @@
 package repositorymemory
 
 import (
-	"bands-api/user"
+	"bands-auth-api/user"
 
 	"golang.org/x/crypto/bcrypt"
 )

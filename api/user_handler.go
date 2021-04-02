@@ -2,14 +2,10 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"reflect"
 
-	dto "bands-api/api/dto"
-	"bands-api/user"
-
-	customerrors "bands-api/custom_errors"
+	dto "bands-auth-api/api/dto"
+	"bands-auth-api/user"
 
 	"github.com/go-chi/chi"
 )
@@ -21,13 +17,26 @@ type userHandler struct {
 // RegisterUserHandler returns a handler struct that handles the api requests for the User Domain
 func RegisterUserHandler(userService user.Service, router *chi.Mux) {
 	handler := userHandler {userService: userService}
-	router.Post("/api/user", handler.register)
-	router.Post("/api/user/login", handler.login)
-	router.Get("/api/user/me", handler.validateToken)
+
+	baseUrl := "/api/v1/"
+
+	router.Post(baseUrl + "user", handler.register)
+	router.Post(baseUrl + "login", handler.login)
+	router.Get(baseUrl + "me", handler.validateToken)
 }
 
+// user - Registers an User
+// @Summary This API can be used to register an User.
+// @Description Registers an User.
+// @Tags chi-swagger
+// @Accept  json
+// @Produce  json
+// @Param login_request body user.User true "Login Request"
+// @Success 201
+// @Router /user [post]
 func (h *userHandler) register(w http.ResponseWriter, r *http.Request) {
 	var u user.User
+
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		code, msg := formatError(err)
@@ -35,22 +44,17 @@ func (h *userHandler) register(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(msg))
 		return
 	}
+
 	err = h.userService.Register(&u)
+	
 	if err != nil {
 		code, msg := formatError(err)
 		w.WriteHeader(code)
 		w.Write([]byte(msg))
 		return
 	}
-	res, err := json.Marshal(&u)
-	if err != nil {
-		code, msg := formatError(err)
-		w.WriteHeader(code)
-		w.Write([]byte(msg))
-		return
-	}
+
 	w.WriteHeader(http.StatusCreated)
-	w.Write(res)
 }
 
 func (h *userHandler) validateToken(w http.ResponseWriter, r *http.Request) {
@@ -75,6 +79,15 @@ func (h *userHandler) validateToken(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
+// login - Authenticates an User
+// @Summary This API can be used authenticate an User.
+// @Description User Login.
+// @Tags chi-swagger
+// @Accept  json
+// @Produce  json
+// @Param login_request body LoginRequest true "Login Request"
+// @Success 200 {string} response "api response"
+// @Router /login [post]
 func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var login dto.LoginRequest
@@ -100,29 +113,4 @@ func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
-}
-
-func formatError(err error) (int, string) {
-	code := http.StatusInternalServerError
-	errType := reflect.TypeOf(err).String()
-
-	if errType == "*customerrors.DomainError" {
-		return formatDomainError(err)
-	}
-	
-	return code, fmt.Sprintf("{ \"message\": \"%s\" }", err)
-}
-
-func formatDomainError(err error) (int, string) {
-	domainError := err.(*customerrors.DomainError)
-	code := http.StatusInternalServerError 
-	switch domainError.ErrorType {
-		case customerrors.InvalidDataError:
-			code = http.StatusBadRequest
-		case customerrors.UnauthorizedError:
-			code = http.StatusForbidden
-		case customerrors.EmailAlreadyTakenError:
-			code = http.StatusConflict
-	}
-	return code, fmt.Sprintf("{ \"message\": \"%s\" }", err)
 }

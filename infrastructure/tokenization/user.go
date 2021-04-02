@@ -1,8 +1,8 @@
 package tokenization
 
 import (
-	customerrors "bands-api/custom_errors"
-	"bands-api/user"
+	customerrors "bands-auth-api/custom_errors"
+	"bands-auth-api/user"
 	"fmt"
 	"os"
 	"strconv"

@@ -3,7 +3,7 @@ version: "3"
 services:
   bandsapi:
     build: .
-    image: bands-api
+    image: bands-auth-api
     networks:
       - backend
     environment:

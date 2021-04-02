@@ -1,0 +1,91 @@
+basePath: /api/v1
+definitions:
+  api.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  user.User:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /is-alive:
+    get:
+      consumes:
+      - application/json
+      description: Tells if the chi-swagger APIs are working or not.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: api response
+          schema:
+            type: string
+      summary: This API can be used as health check for this application.
+      tags:
+      - chi-swagger
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: User Login.
+      parameters:
+      - description: Login Request
+        in: body
+        name: login_request
+        required: true
+        schema:
+          $ref: '#/definitions/api.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: api response
+          schema:
+            type: string
+      summary: This API can be used authenticate an User.
+      tags:
+      - chi-swagger
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Registers an User.
+      parameters:
+      - description: Login Request
+        in: body
+        name: login_request
+        required: true
+        schema:
+          $ref: '#/definitions/user.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+      summary: This API can be used to register an User.
+      tags:
+      - chi-swagger
+swagger: "2.0"

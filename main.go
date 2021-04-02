@@ -8,23 +8,40 @@ import (
 	"strconv"
 	"syscall"
 
-	api "bands-api/api"
-	"bands-api/infrastructure/tokenization"
-	"bands-api/user"
+	api "bands-auth-api/api"
+	"bands-auth-api/infrastructure/tokenization"
+	"bands-auth-api/user"
 
-	repositorymongodb "bands-api/infrastructure/repository/mongodb"
+	repositorymongodb "bands-auth-api/infrastructure/repository/mongodb"
+
+	_ "bands-auth-api/docs"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/golobby/container"
 	"github.com/joho/godotenv"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @title Swagger Example API
+// @version 1.0
+// @description This is a sample server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @BasePath /api/v1
 func main() {
 	_ = godotenv.Load()
 
 	router := chi.NewRouter()
+
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Logger)
@@ -39,19 +56,26 @@ func main() {
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
 
+	router.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger/doc.json"), //The url pointing to API definition"
+	))
+
 	injectDependencies(router)
 
 	errs := make(chan error, 2)
+
 	go func() {
 		fmt.Println("Listening on port ", httpPort())
 		errs <- http.ListenAndServe(httpPort(), router)
 	}()
+
 	go func(){
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT)
 		errs <- fmt.Errorf("%s", <-c)
 	}()
-	fmt.Printf("Terminated %s", <-errs)
+
+	fmt.Println("Terminated ", <-errs)
 }
 
 func httpPort() string {
