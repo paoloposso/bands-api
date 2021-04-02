@@ -18,11 +18,11 @@ type userHandler struct {
 func RegisterUserHandler(userService user.Service, router *chi.Mux) {
 	handler := userHandler {userService: userService}
 
-	baseUrl := "/api/v1/"
+	baseUrl := "/api/v1"
 
-	router.Post(baseUrl + "user", handler.register)
-	router.Post(baseUrl + "login", handler.login)
-	router.Get(baseUrl + "me", handler.validateToken)
+	router.Post(baseUrl + "/user", handler.register)
+	router.Post(baseUrl + "/user/login", handler.login)
+	router.Get(baseUrl + "/user/me", handler.validateToken)
 }
 
 // user - Registers an User
@@ -31,18 +31,24 @@ func RegisterUserHandler(userService user.Service, router *chi.Mux) {
 // @Tags chi-swagger
 // @Accept  json
 // @Produce  json
-// @Param login_request body user.User true "Login Request"
+// @Param userRegistration body user.User true "User Registration"
 // @Success 201
 // @Router /user [post]
 func (h *userHandler) register(w http.ResponseWriter, r *http.Request) {
-	var u user.User
+	var registerReq dto.RegisterRequest
 
-	err := json.NewDecoder(r.Body).Decode(&u)
+	err := json.NewDecoder(r.Body).Decode(&registerReq)
 	if err != nil {
 		code, msg := formatError(err)
 		w.WriteHeader(code)
 		w.Write([]byte(msg))
 		return
+	}
+
+	u := user.User {
+		Name: registerReq.Name,
+		Password: registerReq.Password,
+		Email: registerReq.Email,
 	}
 
 	err = h.userService.Register(&u)
@@ -57,6 +63,15 @@ func (h *userHandler) register(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+// validate token - Validates a Token and returns the data
+// @Summary This API can be used to validate a token.
+// @Description Validate Token
+// @Tags chi-swagger
+// @Accept  json
+// @Produce  json
+// @Param token query string true "Token"
+// @Success 200 {ValidateTokenResponse} response "api response"
+// @Router /user/me [get]
 func (h *userHandler) validateToken(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	token := r.URL.Query().Get("token")
@@ -87,7 +102,7 @@ func (h *userHandler) validateToken(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 // @Param login_request body LoginRequest true "Login Request"
 // @Success 200 {string} response "api response"
-// @Router /login [post]
+// @Router /user/login [post]
 func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	var login dto.LoginRequest

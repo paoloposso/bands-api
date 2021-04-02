@@ -56,7 +56,38 @@ var doc = `{
                 }
             }
         },
-        "/login": {
+        "/user": {
+            "post": {
+                "description": "Registers an User.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chi-swagger"
+                ],
+                "summary": "This API can be used to register an User.",
+                "parameters": [
+                    {
+                        "description": "User Registration",
+                        "name": "userRegistration",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/user/login": {
             "post": {
                 "description": "User Login.",
                 "consumes": [
@@ -90,9 +121,9 @@ var doc = `{
                 }
             }
         },
-        "/user": {
-            "post": {
-                "description": "Registers an User.",
+        "/user/me": {
+            "get": {
+                "description": "Validate Token",
                 "consumes": [
                     "application/json"
                 ],
@@ -102,21 +133,22 @@ var doc = `{
                 "tags": [
                     "chi-swagger"
                 ],
-                "summary": "This API can be used to register an User.",
+                "summary": "This API can be used to validate a token.",
                 "parameters": [
                     {
-                        "description": "Login Request",
-                        "name": "login_request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user.User"
-                        }
+                        "type": "string",
+                        "description": "Token",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": ""
+                    "200": {
+                        "description": "api response",
+                        "schema": {
+                            "type": "ValidateTokenResponse"
+                        }
                     }
                 }
             }

@@ -46,7 +46,27 @@ paths:
       summary: This API can be used as health check for this application.
       tags:
       - chi-swagger
-  /login:
+  /user:
+    post:
+      consumes:
+      - application/json
+      description: Registers an User.
+      parameters:
+      - description: User Registration
+        in: body
+        name: userRegistration
+        required: true
+        schema:
+          $ref: '#/definitions/user.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+      summary: This API can be used to register an User.
+      tags:
+      - chi-swagger
+  /user/login:
     post:
       consumes:
       - application/json
@@ -68,24 +88,25 @@ paths:
       summary: This API can be used authenticate an User.
       tags:
       - chi-swagger
-  /user:
-    post:
+  /user/me:
+    get:
       consumes:
       - application/json
-      description: Registers an User.
+      description: Validate Token
       parameters:
-      - description: Login Request
-        in: body
-        name: login_request
+      - description: Token
+        in: query
+        name: token
         required: true
-        schema:
-          $ref: '#/definitions/user.User'
+        type: string
       produces:
       - application/json
       responses:
-        "201":
-          description: ""
-      summary: This API can be used to register an User.
+        "200":
+          description: api response
+          schema:
+            type: ValidateTokenResponse
+      summary: This API can be used to validate a token.
       tags:
       - chi-swagger
 swagger: "2.0"
