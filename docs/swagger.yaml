@@ -7,7 +7,27 @@ definitions:
       password:
         type: string
     type: object
-  user.User:
+  api.LoginResponse:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      token:
+        type: string
+    type: object
+  api.RegisterRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - name
+    type: object
+  api.ValidateTokenResponse:
     properties:
       email:
         type: string
@@ -15,27 +35,18 @@ definitions:
         type: string
       name:
         type: string
-      password:
-        type: string
     type: object
 info:
-  contact:
-    email: support@swagger.io
-    name: API Support
-    url: http://www.swagger.io/support
-  description: This is a sample server.
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Swagger Example API
+  contact: {}
+  description: Authentication and Registration API.
+  title: Bands Auth API
   version: "1.0"
 paths:
   /is-alive:
     get:
       consumes:
       - application/json
-      description: Tells if the chi-swagger APIs are working or not.
+      description: Tells if the auth APIs are working or not.
       produces:
       - application/json
       responses:
@@ -45,7 +56,7 @@ paths:
             type: string
       summary: This API can be used as health check for this application.
       tags:
-      - chi-swagger
+      - Health Check
   /user:
     post:
       consumes:
@@ -57,7 +68,7 @@ paths:
         name: userRegistration
         required: true
         schema:
-          $ref: '#/definitions/user.User'
+          $ref: '#/definitions/api.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -65,7 +76,7 @@ paths:
           description: ""
       summary: This API can be used to register an User.
       tags:
-      - chi-swagger
+      - User
   /user/login:
     post:
       consumes:
@@ -84,10 +95,10 @@ paths:
         "200":
           description: api response
           schema:
-            type: string
+            $ref: '#/definitions/api.LoginResponse'
       summary: This API can be used authenticate an User.
       tags:
-      - chi-swagger
+      - User
   /user/me:
     get:
       consumes:
@@ -105,8 +116,8 @@ paths:
         "200":
           description: api response
           schema:
-            type: ValidateTokenResponse
+            $ref: '#/definitions/api.ValidateTokenResponse'
       summary: This API can be used to validate a token.
       tags:
-      - chi-swagger
+      - User
 swagger: "2.0"

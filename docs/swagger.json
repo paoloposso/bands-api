@@ -1,25 +1,16 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a sample server.",
-        "title": "Swagger Example API",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "description": "Authentication and Registration API.",
+        "title": "Bands Auth API",
+        "contact": {},
         "version": "1.0"
     },
     "basePath": "/api/v1",
     "paths": {
         "/is-alive": {
             "get": {
-                "description": "Tells if the chi-swagger APIs are working or not.",
+                "description": "Tells if the auth APIs are working or not.",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,7 +18,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "chi-swagger"
+                    "Health Check"
                 ],
                 "summary": "This API can be used as health check for this application.",
                 "responses": {
@@ -50,7 +41,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "chi-swagger"
+                    "User"
                 ],
                 "summary": "This API can be used to register an User.",
                 "parameters": [
@@ -60,7 +51,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.User"
+                            "$ref": "#/definitions/api.RegisterRequest"
                         }
                     }
                 ],
@@ -81,7 +72,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "chi-swagger"
+                    "User"
                 ],
                 "summary": "This API can be used authenticate an User.",
                 "parameters": [
@@ -99,7 +90,7 @@
                     "200": {
                         "description": "api response",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.LoginResponse"
                         }
                     }
                 }
@@ -115,7 +106,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "chi-swagger"
+                    "User"
                 ],
                 "summary": "This API can be used to validate a token.",
                 "parameters": [
@@ -131,7 +122,7 @@
                     "200": {
                         "description": "api response",
                         "schema": {
-                            "type": "ValidateTokenResponse"
+                            "$ref": "#/definitions/api.ValidateTokenResponse"
                         }
                     }
                 }
@@ -150,7 +141,38 @@
                 }
             }
         },
-        "user.User": {
+        "api.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.ValidateTokenResponse": {
             "type": "object",
             "properties": {
                 "email": {
@@ -160,9 +182,6 @@
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "password": {
                     "type": "string"
                 }
             }

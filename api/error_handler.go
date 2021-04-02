@@ -18,6 +18,7 @@ func returnHTTPError(err error) (int, string) {
 		case customerrors.EmailAlreadyTakenError:
 			code = http.StatusConflict
 	}
+	
 	return code, fmt.Sprintf("{ \"message\": \"%s\" }", err)
 }
 

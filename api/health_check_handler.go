@@ -19,8 +19,8 @@ func RegisterHealthCheckHandler(router *chi.Mux) {
 
 // health-check - Health Check
 // @Summary This API can be used as health check for this application.
-// @Description Tells if the chi-swagger APIs are working or not.
-// @Tags chi-swagger
+// @Description Tells if the auth APIs are working or not.
+// @Tags Health Check
 // @Accept  json
 // @Produce  json
 // @Success 200 {string} response "api response"

@@ -18,16 +18,7 @@ var doc = `{
     "info": {
         "description": "{{.Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -35,7 +26,7 @@ var doc = `{
     "paths": {
         "/is-alive": {
             "get": {
-                "description": "Tells if the chi-swagger APIs are working or not.",
+                "description": "Tells if the auth APIs are working or not.",
                 "consumes": [
                     "application/json"
                 ],
@@ -43,7 +34,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "chi-swagger"
+                    "Health Check"
                 ],
                 "summary": "This API can be used as health check for this application.",
                 "responses": {
@@ -66,7 +57,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "chi-swagger"
+                    "User"
                 ],
                 "summary": "This API can be used to register an User.",
                 "parameters": [
@@ -76,7 +67,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.User"
+                            "$ref": "#/definitions/api.RegisterRequest"
                         }
                     }
                 ],
@@ -97,7 +88,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "chi-swagger"
+                    "User"
                 ],
                 "summary": "This API can be used authenticate an User.",
                 "parameters": [
@@ -115,7 +106,7 @@ var doc = `{
                     "200": {
                         "description": "api response",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/api.LoginResponse"
                         }
                     }
                 }
@@ -131,7 +122,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "chi-swagger"
+                    "User"
                 ],
                 "summary": "This API can be used to validate a token.",
                 "parameters": [
@@ -147,7 +138,7 @@ var doc = `{
                     "200": {
                         "description": "api response",
                         "schema": {
-                            "type": "ValidateTokenResponse"
+                            "$ref": "#/definitions/api.ValidateTokenResponse"
                         }
                     }
                 }
@@ -166,7 +157,38 @@ var doc = `{
                 }
             }
         },
-        "user.User": {
+        "api.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.ValidateTokenResponse": {
             "type": "object",
             "properties": {
                 "email": {
@@ -176,9 +198,6 @@ var doc = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "password": {
                     "type": "string"
                 }
             }
@@ -201,8 +220,8 @@ var SwaggerInfo = swaggerInfo{
 	Host:        "",
 	BasePath:    "/api/v1",
 	Schemes:     []string{},
-	Title:       "Swagger Example API",
-	Description: "This is a sample server.",
+	Title:       "Bands Auth API",
+	Description: "Authentication and Registration API.",
 }
 
 type s struct{}

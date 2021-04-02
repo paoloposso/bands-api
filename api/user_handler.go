@@ -28,10 +28,10 @@ func RegisterUserHandler(userService user.Service, router *chi.Mux) {
 // user - Registers an User
 // @Summary This API can be used to register an User.
 // @Description Registers an User.
-// @Tags chi-swagger
+// @Tags User
 // @Accept  json
 // @Produce  json
-// @Param userRegistration body user.User true "User Registration"
+// @Param userRegistration body RegisterRequest true "User Registration"
 // @Success 201
 // @Router /user [post]
 func (h *userHandler) register(w http.ResponseWriter, r *http.Request) {
@@ -66,11 +66,11 @@ func (h *userHandler) register(w http.ResponseWriter, r *http.Request) {
 // validate token - Validates a Token and returns the data
 // @Summary This API can be used to validate a token.
 // @Description Validate Token
-// @Tags chi-swagger
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Param token query string true "Token"
-// @Success 200 {ValidateTokenResponse} response "api response"
+// @Success 200 {object} ValidateTokenResponse "api response"
 // @Router /user/me [get]
 func (h *userHandler) validateToken(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
@@ -97,11 +97,11 @@ func (h *userHandler) validateToken(w http.ResponseWriter, r *http.Request) {
 // login - Authenticates an User
 // @Summary This API can be used authenticate an User.
 // @Description User Login.
-// @Tags chi-swagger
+// @Tags User
 // @Accept  json
 // @Produce  json
 // @Param login_request body LoginRequest true "Login Request"
-// @Success 200 {string} response "api response"
+// @Success 200 {object} LoginResponse "api response"
 // @Router /user/login [post]
 func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
