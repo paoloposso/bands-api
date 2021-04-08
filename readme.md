@@ -1,5 +1,5 @@
-# Bands API
-The Bands API serves as the back-end for the bands APP to be constructed.
+# Bands Auth API
+The Bands Auth API serves as the auth service for the bands APP to be constructed.
 The use cases are exposed via HTTP API, following the REST pattern.
 
 So far it has the following features / use cases:
