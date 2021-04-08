@@ -112,14 +112,14 @@ func (h *userHandler) login(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(msg))
 		return
 	}
-	_, token, err := h.userService.Login(login.Email, login.Password)
+	user, token, err := h.userService.Login(login.Email, login.Password)
 	if err != nil {
 		code, msg := formatError(err)
 		w.WriteHeader(code)
 		w.Write([]byte(msg))
 		return
 	}
-	res, err := json.Marshal(&dto.LoginResponse { Token: token })
+	res, err := json.Marshal(&dto.LoginResponse { Token: token, ID: user.ID })
 	if err != nil {
 		code, msg := formatError(err)
 		w.WriteHeader(code)

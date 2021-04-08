@@ -17,8 +17,6 @@ RUN go get -d -v ./...
 # Install the package
 RUN go install -v ./...
 
-# RUN swag init
-
 EXPOSE 80
 
 # Run the executable

@@ -5,4 +5,5 @@ type LoginResponse struct {
 	Token	string	`json:"token"`
 	Email 	string	`json:"email"`
 	Name 	string	`json:"name"`
+	ID 		string	`json:"id"`
 }
