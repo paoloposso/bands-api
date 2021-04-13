@@ -1,10 +1,11 @@
 package api
 
 import (
-	customerrors "bands-auth-api/custom_errors"
 	"fmt"
 	"net/http"
 	"reflect"
+
+	customerrors "github.com/paoloposso/bands-auth-api/custom_errors"
 )
 
 func returnHTTPError(err error) (int, string) {

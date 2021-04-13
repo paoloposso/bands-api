@@ -1,12 +1,13 @@
 package tokenization
 
 import (
-	customerrors "bands-auth-api/custom_errors"
-	"bands-auth-api/user"
 	"fmt"
 	"os"
 	"strconv"
 	"time"
+
+	customerrors "github.com/paoloposso/bands-auth-api/custom_errors"
+	"github.com/paoloposso/bands-auth-api/user"
 
 	"github.com/dgrijalva/jwt-go"
 )

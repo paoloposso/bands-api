@@ -1,7 +1,7 @@
 package user
 
 import (
-	customerrors "bands-auth-api/custom_errors"
+	customerrors "github.com/paoloposso/bands-auth-api/custom_errors"
 
 	"strings"
 

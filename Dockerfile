@@ -1,6 +1,6 @@
 FROM golang:1.15-alpine
 
-WORKDIR $GOPATH/src/github.com/bands-auth-api
+WORKDIR $GOPATH/src/github.com/github.com/paoloposso/bands-auth-api
 
 ENV MONGO_TIMEOUT=120
 ENV PORT=80
@@ -20,4 +20,4 @@ RUN go install -v ./...
 EXPOSE 80
 
 # Run the executable
-CMD ["bands-auth-api"]
+CMD ["github.com/paoloposso/bands-auth-api"]

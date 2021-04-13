@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"syscall"
 
-	api "bands-auth-api/api"
-	"bands-auth-api/infrastructure/tokenization"
-	"bands-auth-api/user"
+	api "github.com/paoloposso/bands-auth-api/api"
+	"github.com/paoloposso/bands-auth-api/infrastructure/tokenization"
+	"github.com/paoloposso/bands-auth-api/user"
 
-	repositorymongodb "bands-auth-api/infrastructure/repository/mongodb"
+	repositorymongodb "github.com/paoloposso/bands-auth-api/infrastructure/repository/mongodb"
 
-	_ "bands-auth-api/docs"
+	_ "github.com/paoloposso/bands-auth-api/docs"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"

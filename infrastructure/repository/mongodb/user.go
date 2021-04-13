@@ -1,11 +1,12 @@
 package repositorymongodb
 
 import (
-	"bands-auth-api/user"
 	"context"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/paoloposso/bands-auth-api/user"
 
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"

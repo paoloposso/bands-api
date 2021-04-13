@@ -3,7 +3,7 @@ version: "3"
 services:
   bandsapi:
     build: .
-    image: bands-auth-api
+    image: github.com/paoloposso/bands-auth-api
     networks:
       - backend
     environment:

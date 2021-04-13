@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	dto "bands-auth-api/api/dto"
-	"bands-auth-api/user"
+	dto "github.com/paoloposso/bands-auth-api/api/dto"
+	"github.com/paoloposso/bands-auth-api/user"
 
 	"github.com/go-chi/chi"
 )
