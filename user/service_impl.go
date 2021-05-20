@@ -12,7 +12,7 @@ import (
 )
 
 type userService struct {
-	userRepo Repository
+	userRepo            Repository
 	tokenizationService TokenizationService
 }
 
@@ -31,8 +31,8 @@ func (s *userService) Register(user *User) error {
 		return err
 	}
 	existingUser, err := s.userRepo.GetByEmail(user.Email)
-	if (existingUser != nil) {
-		return &customerrors.DomainError { Message: "E-mail already taken", ErrorType: customerrors.EmailAlreadyTakenError }
+	if existingUser != nil {
+		return &customerrors.DomainError{Message: "E-mail already taken", ErrorType: customerrors.EmailAlreadyTakenError}
 	}
 	hash, err := generatePasswordHash(user.Password)
 	if err != nil {
@@ -55,24 +55,23 @@ func (s *userService) Login(email string, password string) (*User, string, error
 	if err != nil {
 		return nil, "", err
 	} else if user == nil || user.Email == "" {
-		return nil, "", &customerrors.DomainError { 
-				Message: "Inexistent e-mail or wrong password",
-				ErrorType: customerrors.UnauthorizedError,
-			}
+		return nil, "", &customerrors.DomainError{
+			Message:   "Inexistent e-mail or wrong password",
+			ErrorType: customerrors.UnauthorizedError,
+		}
 	}
 	if checkPasswordHash(password, user.Password) {
 		token, err := s.tokenizationService.CreateUserToken(user.Email, user.ID)
 		if err != nil {
 			return nil, "", errors.New("Error creating Token :" + err.Error())
 		}
-
 		user.Password = ""
 		return user, token, nil
 	} else {
-		return nil, "", &customerrors.DomainError { 
-				Message: "Inexistent e-mail or wrong password",
-				ErrorType: customerrors.UnauthorizedError,
-			}
+		return nil, "", &customerrors.DomainError{
+			Message:   "Inexistent e-mail or wrong password",
+			ErrorType: customerrors.UnauthorizedError,
+		}
 	}
 }
 
@@ -83,13 +82,15 @@ func (s *userService) GetDataByToken(token string) (*User, error) {
 		return nil, errors.WithStack(err)
 	}
 	user, err := s.userRepo.GetByID(id)
-
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
 	user.Password = ""
 	return user, nil
 }
 
 func generateID() string {
-    return strings.Replace(uuid.New().String(), "-", "", -1)
+	return strings.Replace(uuid.New().String(), "-", "", -1)
 }
 
 func generatePasswordHash(plainTextPassword string) (string, error) {
@@ -98,21 +99,21 @@ func generatePasswordHash(plainTextPassword string) (string, error) {
 }
 
 func checkPasswordHash(plaintTextPassword, hash string) bool {
-    err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(plaintTextPassword))
-    return err == nil
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(plaintTextPassword))
+	return err == nil
 }
 
 func validateLogin(email string, password string) error {
 	var errors []string
-	
+
 	if email == "" {
 		errors = append(errors, "E-mail is required")
 	}
 	if password == "" {
 		errors = append(errors, "Password is required")
 	}
-	if (len(errors) > 0) {
-		return &customerrors.DomainError{ Message: strings.Join(errors, ";"), ErrorType: customerrors.InvalidDataError }
+	if len(errors) > 0 {
+		return &customerrors.DomainError{Message: strings.Join(errors, ";"), ErrorType: customerrors.InvalidDataError}
 	}
 
 	return nil

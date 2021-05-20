@@ -56,12 +56,14 @@ func main() {
 
 	errs := make(chan error, 2)
 
+	port := getHttpPort()
+
 	go func() {
-		fmt.Println("Listening on port ", httpPort())
-		errs <- http.ListenAndServe(httpPort(), router)
+		fmt.Println("Listening on port ", port)
+		errs <- http.ListenAndServe(port, router)
 	}()
 
-	go func(){
+	go func() {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGINT)
 		errs <- fmt.Errorf("%s", <-c)
@@ -70,7 +72,7 @@ func main() {
 	fmt.Println("Terminated ", <-errs)
 }
 
-func httpPort() string {
+func getHttpPort() string {
 	port := "8000"
 	if os.Getenv("PORT") != "" {
 		port = os.Getenv("PORT")
@@ -89,24 +91,24 @@ func injectDependencies(router *chi.Mux) {
 		}
 		return repo
 	})
-	
+
 	container.Transient(func() user.TokenizationService {
 		service := tokenization.NewUserLoginTokenizationService()
 		return service
 	})
 
 	container.Transient(func() user.Service {
-		var repo user.Repository 
+		var repo user.Repository
 		container.Make(&repo)
-		var tokenizationService user.TokenizationService 
+		var tokenizationService user.TokenizationService
 		container.Make(&tokenizationService)
 		service := user.NewUserService(repo, tokenizationService)
 		return service
 	})
-	
+
 	var service user.Service
 	container.Make(&service)
-	
+
 	api.RegisterUserHandler(service, router)
 	api.RegisterHealthCheckHandler(router)
 }

@@ -32,3 +32,9 @@ PORT=5000
 MONGO_URL=mongodb://localhost:27017
 MONGO_DB=bands-db-sample
 MONGO_TIMEOUT=5
+
+## swagger
+install swag via ```go get -u github.com/swaggo/swag/cmd/swag``` (already installed in this project)
+run ```swag init``` to generate swagger files
+swagger documentation can be accessed via /swagger/index.html
+example: http://localhost:5000/swagger/index.html
